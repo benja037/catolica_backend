@@ -1,7 +1,7 @@
-from rest_framework.decorators  import api_view
+""" from rest_framework.decorators  import api_view
 from rest_framework.response import Response
 from .serializers import UserSerializer
-from rest_framework.authtoken.models import Token
+#from rest_framework.authtoken.models import Token
 from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.models import User
@@ -20,11 +20,11 @@ def register(request):
         serializer.save()
 
         user = User.objects.get(username=serializer.data['username'])
-        user.set_password(serializer.data['password'])  
+        user.set_password(serializer.data['password']) 
         user.save()
 
-        token = Token.objects.create(user=user)
-        return Response({'token': token.key, "user": serializer.data},status = status.HTTP_201_CREATED)
+        
+        return Response({"user": serializer.data},status = status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
@@ -38,4 +38,4 @@ def profile(request):
 
 
 
-    return Response("You are login with {}".format(request.user.username),status = status.HTTP_200_OK)
+    return Response("You are login with {}".format(request.user.username),status = status.HTTP_200_OK) """
