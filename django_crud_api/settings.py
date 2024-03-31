@@ -44,23 +44,27 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
-    'tasks',
+    #'tasks',
+    'accounts'
 ]
-REST_FRAMEWORK = {    
+
+AUTH_USER_MODEL = "accounts.User"
+REST_FRAMEWORK = {   
+    'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-       
+        'rest_framework.authentication.SessionAuthentication',       
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated')
    
 }
 
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
@@ -135,10 +139,10 @@ WSGI_APPLICATION = 'django_crud_api.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        'NAME': 'catolicaDB',
+        'NAME': 'catolicadb',
         'USER': 'fl0user',
-        'PASSWORD': 'Dfu7YFbPy3RC',
-        'HOST': 'ep-super-credit-a5bn0vav.us-east-2.aws.neon.fl0.io',
+        'PASSWORD': 'KSr4ijlb5kXV',
+        'HOST': 'ep-polished-tooth-a57ccoif.us-east-2.aws.neon.fl0.io',
         'PORT': '5432',
     }
 }
