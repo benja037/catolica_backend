@@ -42,6 +42,12 @@ class AttendanceSerializer(serializers.ModelSerializer):
         model = Attendance
         fields=['id','student_id','subject_id','estado','dateandhour']
 
+
+class AttendanceSerializerOnlyDateandHour(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Attendance
+        fields=['dateandhour']
 #===============================================================================
 class SignUpSerializer(serializers.ModelSerializer):    
     email= serializers.CharField(max_length=80)
