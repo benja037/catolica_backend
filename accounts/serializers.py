@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import Clase, Teachers, User
 from rest_framework.validators import ValidationError
 
 
@@ -21,20 +21,38 @@ class ClaseAlumnosSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model= User
-        fields=['id','firstname','lastname','date_of_birth']
+        fields=['id','email','username','gender','date_of_birth','firstname','lastname','phone_number','user_type']
+
+class TeacherSerializer(serializers.ModelSerializer):
+    admin = UserSerializer(read_only=True)
+    class Meta:
+        model= Teachers
+        fields=['id','admin','gender','date_of_birth','firstname','lastname']
+
+class CourseSerializer(serializers.ModelSerializer):    
+    class Meta:
+            model= Students
+            fields=['id','course_name']
+
 
 class StudentsSerializer(serializers.ModelSerializer):
     admin = UserSerializer(read_only=True)
     class Meta:
         model= Students
-        fields=['id','admin','gender','address']
+        fields=['id','admin','gender','date_of_birth','firstname','lastname']
 
 
 class SubjectsSerializer(serializers.ModelSerializer):
     alumnos = StudentsSerializer(many=True, read_only=True)
     class Meta:
         model = Subjects
-        fields=['id','subject_name','course_id','staff_id','alumnos']
+        fields=['id','subject_name','staff_id','alumnos']
+
+class ClaseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Clase
+        fields=['id','subject_name','date_and_hour','subject_id','estado']
 
 class AttendanceSerializer(serializers.ModelSerializer):
     

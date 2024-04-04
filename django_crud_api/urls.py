@@ -6,7 +6,8 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("auth/",include("accounts.urls")),
+    path("auth/",include("accounts.urls_auth")),
+    path("apiv1/",include("accounts.urls")),
     #path('tasks/',include('tasks.urls')),
     #re_path('register', views.register),
     #re_path('profile', views.profile),

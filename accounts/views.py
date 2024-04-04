@@ -1,4 +1,6 @@
 from django.shortcuts import render
+
+from django_crud_api import settings
 from .serializers import SignUpSerializer,SubjectsSerializer,StudentsSerializer,UserSerializer,AttendanceSerializer,AttendanceSerializerOnlyDateandHour
 from rest_framework import generics,status,viewsets
 from rest_framework.response import Response
@@ -13,7 +15,7 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Subjects,Students,User,Attendance
-
+from jwt import decode, exceptions
 
 
 
@@ -115,7 +117,8 @@ class LoginView(APIView):
 
         if user is not None:
             tokens = create_jwt_pair_for_user(user)
-            response = {"message": "Login Successfull", "tokens": tokens}
+            user_type = user.user_type
+            response = {"message": "Login Successfull", "tokens": tokens,"user_type":user_type}
             return Response(data=response, status = status.HTTP_200_OK)
         else:
             return Response(data={"message": "Invalid email or password"})
@@ -156,3 +159,26 @@ class SubjectAttendanceAPIView(APIView):
             attendance.estado = estado
             attendance.save()
         return Response(status=status.HTTP_200_OK,data= {"created":created})
+    
+class ProbandoAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        token = request.headers['Authorization'].split(' ')[1]
+        try:
+            payload = decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user_id = payload['user_id']
+            user = User.objects.get(id=user_id)
+            user_type = user.user_type
+            
+            if user_type == 'profesor':
+                # Código para la vista del profesor
+                return Response({"message": "Vista para profesor"}, status=status.HTTP_200_OK)
+            elif user_type == 'alumno':
+                # Código para la vista del estudiante
+                return Response({"message": "Vista para estudiante"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "Tipo de usuario no reconocido"}, status=status.HTTP_400_BAD_REQUEST)
+        except exceptions.DecodeError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
