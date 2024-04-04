@@ -37,26 +37,27 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email,password,**extra_fields)
 
-class User(AbstractUser):
-    email = models.CharField(max_length=80,unique=True)
-    username=models.CharField(max_length=45)
-    date_of_birth=models.DateField(null=True)
-    firstname = models.CharField(max_length=45,null=True)
-    lastname = models.CharField(max_length=45,null=True)
+class User(AbstractUser):   
+
+    TIPO_GENDER_CHOICES = [('hombre', 'hombre'),('mujer', 'mujer'),]
     objects= UserManager()
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
     USUARIO_ALUMNO = 'alumno'
     USUARIO_PROFESOR = 'profesor'
+    USUARIO_APODERADO = 'apoderado'
+    TIPO_USUARIO_CHOICES = [(USUARIO_ALUMNO, 'Alumno'),      (USUARIO_PROFESOR, 'Profesor'),(USUARIO_APODERADO, 'Apoderado'),]    
 
-    TIPO_USUARIO_CHOICES = [
-        (USUARIO_ALUMNO, 'Alumno'),
-        (USUARIO_PROFESOR, 'Profesor'),
-    ]
-
-    
+    email = models.CharField(max_length=80,unique=True)
+    username=models.CharField(max_length=45)
+    gender=models.CharField(choices = TIPO_GENDER_CHOICES,max_length=255,null = True)      
+    date_of_birth=models.DateField(null=True)
+    firstname = models.CharField(max_length=45,null=True)
+    lastname = models.CharField(max_length=45,null=True)
+    phone_number = models.CharField(max_length=45,null=True)        
     user_type=models.CharField(choices=TIPO_USUARIO_CHOICES,max_length=10)
- 
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.username
     
@@ -64,55 +65,91 @@ class User(AbstractUser):
 class Teachers(models.Model):
     id=models.AutoField(primary_key=True)
     admin=models.OneToOneField(User,on_delete=models.CASCADE)
-    address=models.TextField()
+    
     created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    TIPO_GENDER_CHOICES = [
+        ('Hombre', 'Hombre'),
+        ('Mujer', 'Mujer'),
+    ]
+    gender=models.CharField(choices = TIPO_GENDER_CHOICES,max_length=255,null = True)    
+    date_of_birth=models.DateField(null=True)
+    firstname = models.CharField(max_length=45,null=True)
+    lastname = models.CharField(max_length=45,null=True)
 
 
 class Courses(models.Model):
     id=models.AutoField(primary_key=True)
     course_name=models.CharField(max_length=255)
     created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
 
 class Students(models.Model):
     id=models.AutoField(primary_key=True)
-    admin=models.OneToOneField(User,on_delete=models.CASCADE)
-    gender=models.CharField(max_length=255)    
-    address=models.TextField()        
+    admin=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
+    date_of_birth=models.DateField(null=True)
+    firstname = models.CharField(max_length=45,null=True)
+    lastname = models.CharField(max_length=45,null=True)
+    TIPO_GENDER_CHOICES = [
+        ('Hombre', 'Hombre'),
+        ('Mujer', 'Mujer'),
+    ]
+    gender=models.CharField(choices = TIPO_GENDER_CHOICES,max_length=255,null = True)        
+    
     created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
 class Subjects(models.Model):
     id=models.AutoField(primary_key=True)
     subject_name=models.CharField(max_length=255)
-    course_id=models.ForeignKey('Courses',on_delete=models.CASCADE)
-    staff_id=models.ForeignKey('Teachers',on_delete=models.CASCADE)
+    course_id=models.ForeignKey('Courses',on_delete=models.SET_NULL, null=True)
+    staff_id=models.ForeignKey('Teachers',on_delete=models.SET_NULL, null=True)
     created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
     alumnos = models.ManyToManyField(Students)
+    finished = models.BooleanField(default=False)
+
+class Clase(models.Model):
+    id=models.AutoField(primary_key=True)
+    date_and_hour= models.DateTimeField()
+    subject_id=models.ForeignKey('Subjects',on_delete=models.PROTECT)
+    ESTADOS_CHOICES = [('proximamente', 'proximamente'),('realizada', 'realizada'),('realizada-parcial','realizada-parcial'), ('cancelada','cancelada')]
+    estado=models.CharField(choices = ESTADOS_CHOICES,max_length=255,default='proximamente')
 
 
 class Attendance(models.Model):
+
+    ESTADO_PREVIO_CHOICES = [('asistire', 'Asistiré'),('no-asistire', 'no-asistire'),('no-responde', 'No responde')
+    ]
+            
     id=models.AutoField(primary_key=True)
-    student_id=models.ForeignKey('Students',on_delete=models.CASCADE, null=True)
-    subject_id=models.ForeignKey('Subjects',on_delete=models.CASCADE)
-    dateandhour = models.DateTimeField(null = True)
-    
+    student_id=models.ForeignKey('Students',on_delete=models.PROTECT, null=True)
+    clase_id=models.ForeignKey('Clase',on_delete=models.CASCADE,null=True)       
     estado=models.BooleanField(default=False)
+    user_estado_previo=models.CharField(choices = ESTADO_PREVIO_CHOICES,max_length=255,default='no-responde')
     created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
    
 
 @receiver(post_save,sender=User)
 def create_user_profile(sender,instance,created,**kwargs):
     if created:        
         if instance.user_type=="Profesor":
-            Teachers.objects.create(admin=instance,address="")
+            Teachers.objects.create(admin=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
         if instance.user_type=="Alumno":
-            Students.objects.create(admin=instance,address="",gender="")
+            Students.objects.create(admin=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
+        if instance.user_type=="Apoderado":
+            pass
 
+
+"""
+gender=models.CharField(max_length=255)    
+    date_of_birth=models.DateField(null=True)
+    firstname = models.CharField(max_length=45,null=True)
+    lastname = models.CharField(max_length=45,null=True)
+    phone_number = models.CharField(max_length=45,null=True)
+"""
 """ @receiver(post_save,sender=User)
 def save_user_profile(sender,instance,**kwargs):
     
