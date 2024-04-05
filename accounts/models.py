@@ -76,13 +76,17 @@ class Teachers(models.Model):
     date_of_birth=models.DateField(null=True)
     firstname = models.CharField(max_length=45,null=True)
     lastname = models.CharField(max_length=45,null=True)
-
+    def __str__(self):
+        return self.firstname + self.lastname
+    
 
 class Courses(models.Model):
     id=models.AutoField(primary_key=True)
     course_name=models.CharField(max_length=255)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.course_name
 
 
 class Students(models.Model):
@@ -100,6 +104,8 @@ class Students(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
+ 
+
 class Subjects(models.Model):
     id=models.AutoField(primary_key=True)
     subject_name=models.CharField(max_length=255)
@@ -109,6 +115,7 @@ class Subjects(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
     alumnos = models.ManyToManyField(Students)
     finished = models.BooleanField(default=False)
+    
 
 class Clase(models.Model):
     id=models.AutoField(primary_key=True)

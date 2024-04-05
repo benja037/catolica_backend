@@ -11,8 +11,8 @@ class TeachersDisplay(admin.ModelAdmin):
     list_display = ('id','gender','firstname','lastname')
 admin.site.register(Teachers)
 class CoursesDisplay(admin.ModelAdmin):
-    list_display = ('id','gender','firstname','lastname')
-admin.site.register(Courses)
+    list_display = ('course_name','id')
+admin.site.register(Courses,CoursesDisplay)
 class SubjectsDisplay(admin.ModelAdmin):
     list_display = ('id','gender','firstname','lastname')
 admin.site.register(Subjects)

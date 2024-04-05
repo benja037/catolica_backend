@@ -48,6 +48,11 @@ class SubjectsSerializer(serializers.ModelSerializer):
         model = Subjects
         fields=['id','subject_name','staff_id','alumnos']
 
+class AddSubjectsSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = Subjects
+        fields=['course_id','subject_name','staff_id']
+
 class ClaseSerializer(serializers.ModelSerializer):
 
     class Meta:

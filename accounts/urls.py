@@ -15,6 +15,7 @@ urlpatterns = [
     path('obj/<int:pk>/', TuModeloDetalle.as_view(), name='obj'),
     path('listar/subjects/<int:subject_id>/attendance/', views.SubjectAttendanceAPIView.as_view(), name='subject_attendance_api'),
     path('probando/', views.ProbandoAPIView.as_view(), name='subject_attendance_api'),
+    path('mysubjects/', views.SubjectbyAPIView.as_view(), name='subject_attendance_api'),
 
     #path('clases/alumnos/', ListaAlumnosClaseAPIView.as_view(), name='lista_alumnos_clase'),
     #path("api/",include(router.urls))
