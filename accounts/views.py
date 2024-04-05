@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from django_crud_api import settings
-from .serializers import SignUpSerializer,SubjectsSerializer,StudentsSerializer,UserSerializer,AttendanceSerializer,AttendanceSerializerOnlyDateandHour
+from .serializers import AddSubjectsSerializer, SignUpSerializer,SubjectsSerializer,StudentsSerializer,UserSerializer,AttendanceSerializer,AttendanceSerializerOnlyDateandHour
 from rest_framework import generics,status,viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -14,7 +14,7 @@ from django.contrib.auth import authenticate
 # Create your views here.
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Subjects,Students,User,Attendance
+from .models import Subjects,Students, Teachers,User,Attendance
 from jwt import decode, exceptions
 
 
@@ -182,3 +182,42 @@ class ProbandoAPIView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        
+class SubjectbyAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AddSubjectsSerializer
+    def get_teacher(self,request):
+        token = request.headers['Authorization'].split(' ')[1]
+        try:
+            payload = decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user_id = payload['user_id']
+            user = User.objects.get(id=user_id)
+            teacher = Teachers.objects.get(admin=user)
+            #user_type = user.user_type
+            return teacher
+        except User.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+
+    def get(self,request):
+        teacher = self.get_teacher(request)
+        #students = subject.alumnos.all()
+        subjects_from_user = Subjects.objects.filter(staff_id=teacher.id)
+        serializer = SubjectsSerializer(subjects_from_user, many=True)
+        
+        return Response(status=status.HTTP_200_OK,data = {"subjects_from_teacher":serializer.data})
+    
+    def post(self,request):
+        data = request.data.copy()
+        teacher = self.get_teacher(request)
+        data["staff_id"] = teacher.id
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            serializer.save()
+
+            response = {
+                "message": "Subject Created Successfully",
+                "data": serializer.data
+            }
+            return Response(data=response,status=status.HTTP_201_CREATED)
+    
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
