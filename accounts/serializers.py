@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Clase, Teachers, User
+from .models import Clase, Courses, Horario, Teachers, User
 from rest_framework.validators import ValidationError
 
 
@@ -31,7 +31,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):    
     class Meta:
-            model= Students
+            model= Courses
             fields=['id','course_name']
 
 
@@ -57,7 +57,13 @@ class ClaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Clase
-        fields=['id','subject_name','date_and_hour','subject_id','estado']
+        fields=['id','date_and_hour','subject_id','estado']
+
+class HorarioSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Horario
+        fields=['id','day_of_week','time','alumnos_horario']
 
 class AttendanceSerializer(serializers.ModelSerializer):
     

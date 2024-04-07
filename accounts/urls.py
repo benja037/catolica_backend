@@ -8,6 +8,8 @@ router.register(r'subjects',views.SubjectsView, 'subject')
 router.register(r'students',views.StudentsView, 'student')
 router.register(r'users',views.UserView, 'user')
 router.register(r'attendance',views.AttendanceView, 'attendance')
+router.register(r'courses',views.CoursesView, 'courses')
+router.register(r'horario',views.HorarioView, 'horario')
 
 urlpatterns = [    
     path("listar/",include(router.urls)),

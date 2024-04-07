@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from django_crud_api import settings
-from .serializers import AddSubjectsSerializer, SignUpSerializer,SubjectsSerializer,StudentsSerializer,UserSerializer,AttendanceSerializer,AttendanceSerializerOnlyDateandHour
+from .serializers import AddSubjectsSerializer, CourseSerializer, HorarioSerializer, SignUpSerializer,SubjectsSerializer,StudentsSerializer,UserSerializer,AttendanceSerializer,AttendanceSerializerOnlyDateandHour
 from rest_framework import generics,status,viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -14,7 +14,7 @@ from django.contrib.auth import authenticate
 # Create your views here.
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Subjects,Students, Teachers,User,Attendance
+from .models import Horario, Subjects,Students, Teachers,User,Attendance, Courses
 from jwt import decode, exceptions
 
 
@@ -77,6 +77,16 @@ class StudentsView(ModelViewSet):
 class AttendanceView(ModelViewSet):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
+    permission_classes = []
+
+class CoursesView(ModelViewSet):
+    queryset = Courses.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = []
+
+class HorarioView(ModelViewSet):
+    queryset = Horario.objects.all()
+    serializer_class = HorarioSerializer
     permission_classes = []
 
     
