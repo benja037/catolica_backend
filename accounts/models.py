@@ -115,15 +115,20 @@ class Subjects(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
     alumnos = models.ManyToManyField(Students)
     finished = models.BooleanField(default=False)
-    
+
+class Horario(models.Model):
+    DAYS_CHOICES = [('lunes', 'lunes'),('martes', 'martes'),('miercoles','miercoles'), ('jueves','jueves'), ('viernes','viernes'), ('sabado','sabado'), ('domingo','domingo')]
+    day_of_week = models.CharField(choices = DAYS_CHOICES,max_length=15,default=None)  
+    time= models.TimeField()
+    alumnos_horario = models.ManyToManyField(Students,blank=True)  
 
 class Clase(models.Model):
     id=models.AutoField(primary_key=True)
     date_and_hour= models.DateTimeField()
-    subject_id=models.ForeignKey('Subjects',on_delete=models.PROTECT)
+    horario_id=models.ForeignKey('Horario',on_delete=models.PROTECT)
     ESTADOS_CHOICES = [('proximamente', 'proximamente'),('realizada', 'realizada'),('realizada-parcial','realizada-parcial'), ('cancelada','cancelada')]
     estado=models.CharField(choices = ESTADOS_CHOICES,max_length=255,default='proximamente')
-
+    
 
 class Attendance(models.Model):
 
