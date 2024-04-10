@@ -41,12 +41,26 @@ class StudentsSerializer(serializers.ModelSerializer):
         model= Students
         fields=['id','admin','gender','date_of_birth','firstname','lastname']
 
+#----------Subjects Serializer-------------------
+#Get all subjects
+class SubjectsSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = Subjects
+        fields=['id','subject_name','staff_id','course_id']
 
-class SubjectsSerializer(serializers.ModelSerializer):
+#Get specific subject
+class Subjects_with_students_Serializer(serializers.ModelSerializer):
     alumnos = StudentsSerializer(many=True, read_only=True)
     class Meta:
         model = Subjects
         fields=['id','subject_name','staff_id','alumnos']
+#Update specific subject
+class Subjects_all_edit(serializers.ModelSerializer):
+    alumnos = StudentsSerializer(many=True, read_only=True)
+    class Meta:
+        model = Subjects
+        fields=['id','subject_name','staff_id','alumnos','finished']
+
 
 class AddSubjectsSerializer(serializers.ModelSerializer):    
     class Meta:
