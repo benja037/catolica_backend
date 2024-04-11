@@ -100,10 +100,11 @@ class SignUpSerializer(serializers.ModelSerializer):
     lastname=serializers.CharField(max_length=45)
     date_of_birth = serializers.DateField()
     user_type=serializers.CharField(max_length=10)
+    gender=serializers.CharField(max_length=20)
  
     class Meta:
         model=User
-        fields= ['email','username','password','firstname','lastname','date_of_birth','user_type']
+        fields= ['email','username','password','firstname','lastname','date_of_birth','user_type','gender']
 
     def validate(self,attrs):
         email_exists=User.objects.filter(email=attrs['email']).exists()
