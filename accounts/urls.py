@@ -12,7 +12,7 @@ router.register(r'subjects',views_simple.SubjectsView, 'subject')
 router.register(r'students',views_simple.StudentsView, 'student')
 router.register(r'users',views_simple.UserView, 'user')
 router.register(r'attendance',views_simple.AttendanceView, 'attendance')
-router.register(r'courses',views_simple.CoursesView, 'courses')
+#router.register(r'courses',views_simple.CoursesView, 'courses')
 router.register(r'horario',views_simple.HorarioView, 'horario')
 
 
