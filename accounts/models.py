@@ -46,7 +46,7 @@ class User(AbstractUser):
     USUARIO_ALUMNO = 'alumno'
     USUARIO_PROFESOR = 'profesor'
     USUARIO_APODERADO = 'apoderado'
-    TIPO_USUARIO_CHOICES = [(USUARIO_ALUMNO, 'Alumno'),      (USUARIO_PROFESOR, 'Profesor'),(USUARIO_APODERADO, 'Apoderado'),]    
+    TIPO_USUARIO_CHOICES = [(USUARIO_ALUMNO, 'alumno'),      (USUARIO_PROFESOR, 'profesor'),(USUARIO_APODERADO, 'apoderado'),]    
 
     email = models.CharField(max_length=80,unique=True)
     username=models.CharField(max_length=45)
@@ -147,11 +147,11 @@ class Attendance(models.Model):
 @receiver(post_save,sender=User)
 def create_user_profile(sender,instance,created,**kwargs):
     if created:        
-        if instance.user_type=="Profesor":
+        if instance.user_type=="profesor":
             Teachers.objects.create(admin=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
-        if instance.user_type=="Alumno":
+        if instance.user_type=="alumno":
             Students.objects.create(admin=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
-        if instance.user_type=="Apoderado":
+        if instance.user_type=="apoderado":
             pass
 
 
