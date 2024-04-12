@@ -71,19 +71,24 @@ class ClaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Clase
-        fields=['id','date_and_hour','subject_id','estado']
+        fields=['id','date_and_hour','horario_id','estado']
 
 class HorarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Horario
-        fields=['id','day_of_week','time','alumnos_horario']
+        fields=['id','day_of_week','time','alumnos_horario','subject_id']
+class Horario_with_studentes_Serializer(serializers.ModelSerializer):
+    alumnos_horario = StudentsSerializer(many=True, read_only=True)
+    class Meta:
+        model = Horario
+        fields=['id','day_of_week','time','alumnos_horario','subject_id']
 
 class AttendanceSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Attendance
-        fields=['id','student_id','subject_id','estado','dateandhour']
+        fields=['id','student_id','clase_id','estado','user_estado_previo']
 
 
 class AttendanceSerializerOnlyDateandHour(serializers.ModelSerializer):
@@ -91,6 +96,14 @@ class AttendanceSerializerOnlyDateandHour(serializers.ModelSerializer):
     class Meta:
         model = Attendance
         fields=['dateandhour']
+
+class AttendanceSerializerOnlyEstadoChange(serializers.ModelSerializer):        
+    user_estado_previo =serializers.ReadOnlyField()    
+    class Meta:
+        model = Attendance
+        fields=['id','student_id','clase_id','estado','user_estado_previo']
+
+
 #===============================================================================
 class SignUpSerializer(serializers.ModelSerializer):    
     email= serializers.CharField(max_length=80)
