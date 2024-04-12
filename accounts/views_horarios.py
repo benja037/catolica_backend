@@ -2,22 +2,23 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action,permission_classes
+from rest_framework.views import APIView
 
 from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer
+from accounts.serializers import Horario_with_studentes_Serializer, HorarioSerializer, StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer
 
-from .models import Students,Subjects,Courses, Teachers, User
+from .models import Horario, Students,Subjects,Courses, Teachers, User
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
 @permission_classes([IsOwnerOrReadOnly & IsProfesorOrReadOnly])
-class Subjects_allView(ModelViewSet):    
-    serializer_class = SubjectsSerializer       
-    queryset = Subjects.objects.all()
+class Horarios_allView(ModelViewSet):    
+    serializer_class = HorarioSerializer       
+    queryset = Horario.objects.all()
     def get_queryset(self):
-        course_id = self.request.query_params.get('course_pk') or None
-        if course_id is not None:
-            filtro = Subjects.objects.filter(course_id=course_id) 
+        subject_id = self.request.query_params.get('pk') or None
+        if subject_id is not None:
+            filtro = Horario.objects.filter(subject_id=subject_id) 
             #queryset = Subjects.objects.all()
             serializer = self.serializer_class(filtro, many=True)
         return Response(serializer.data)
@@ -29,91 +30,91 @@ class Subjects_allView(ModelViewSet):
             return teacher
         except User.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND    
-    def get_subject(self, subject_id):
+    def get_horario(self, horario_id):
         try:
-            return Subjects.objects.get(id=subject_id)
-        except Subjects.DoesNotExist:
+            return Horario.objects.get(id=horario_id)
+        except Horario.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND
     
-    def list_subjects(self,request,course_pk=None):
+    def list_horarios(self,request,pk=None):
         try:
-            filtro = Subjects.objects.filter(course_id=course_pk) 
-            serializer = SubjectsSerializer(filtro, many=True)
+            filtro = Horario.objects.filter(subject_id=pk) 
+            serializer = Horario_with_studentes_Serializer(filtro, many=True)
             return Response(serializer.data)
-        except Subjects.DoesNotExist:
+        except Horario.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         
     @action(detail=True, methods=['get'])    
-    def retrieve_subject(self, request, pk=None,course_pk=None):
+    def retrieve_horario(self, request, pk=None,horario_pk=None):
         try:
-            subject = self.get_subject(subject_id=pk)
-            serializer = Subjects_with_students_Serializer(subject)
+            horario = self.get_horario(horario_id=horario_pk)
+            serializer = Horario_with_studentes_Serializer(horario)
             return Response(serializer.data)
-        except Subjects.DoesNotExist:
+        except Horario.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
    
     @action(detail=False, methods=['post'])
-    def create_subject(self, request, pk=None,course_pk=None):
+    def create_horario(self, request, pk=None,horario_pk=None):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save(staff_id=self.get_teacher(request),course_id=Courses.objects.get(id=course_pk))
+            serializer.save(subject_id=Subjects.objects.get(id=pk))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_subject(self, request, pk=None,course_pk=None):
+    def delete_horario(self, request, pk=None,horario_pk=None):
         try:
-            subject = self.get_subject(subject_id=pk)
-            subject.delete()
+            horario = self.get_horario(horario_id=horario_pk)
+            horario.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except Subjects.DoesNotExist:
+        except Horario.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['put'])
-    def update_subject(self, request, pk=None):
+    def update_horario(self, request, pk=None,horario_pk=None):
         try:
-            subject = self.get_subject(subject_id=pk)
-            serializer = Subjects_with_students_Serializer(subject, data=request.data)
+            horario = self.get_horario(horario_id=horario_pk)
+            serializer = Horario_with_studentes_Serializer(horario, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Subjects.DoesNotExist:
+        except Horario.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
+        
 @permission_classes([IsOwnerOrReadOnly & IsProfesorOrReadOnly])
-class SubjectsAlumnos(ModelViewSet):
-    def get_alumnos(self, request, pk=None):
+class CursoMateriaAlumnos(ModelViewSet):
+    def get_alumnos(self, request, horario_pk):
         try:
-            subject = Subjects.objects.get(id=pk)
-            serializer = StudentsSerializer(subject.alumnos,many=True)
+            horario = Horario.objects.get(id=horario_pk)
+            serializer = StudentsSerializer(horario.alumnos_horario,many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Subjects.DoesNotExist:
-            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Horario.DoesNotExist:
+            return Response({"message": "Curso no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
 
-    def post_alumno(self, request, pk=None):
+    def post_alumno(self, request, horario_pk=None):
         try:            
             alumno_id = request.data.get('alumno_pk')  # Suponiendo que envías el ID del alumno en el cuerpo de la solicitud
             alumno = Students.objects.get(id=alumno_id)
-            subject = Subjects.objects.get(id=pk)
-            subject.alumnos.add(alumno)
+            horario = Horario.objects.get(id=horario_pk)
+            horario.alumnos_horario.add(alumno)
             return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
         except Students.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Subjects.DoesNotExist:
-            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Horario.DoesNotExist:
+            return Response({"message": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-    def delete_alumno(self,request, pk=None):
+    def delete_alumno(self,request, horario_pk=None):
         try:
             alumno_id = request.data.get('alumno_pk')            
             alumno = Students.objects.get(id=alumno_id)
-            subject = Subjects.objects.get(id=pk)
-            subject.alumnos.remove(alumno)
+            horario = Horario.objects.get(id=horario_pk)
+            horario.alumnos_horario.remove(alumno)
             return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
         except Students.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Subjects.DoesNotExist:
+        except Horario.DoesNotExist:
             return Response({"message": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
