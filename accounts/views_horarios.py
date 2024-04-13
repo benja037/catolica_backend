@@ -46,7 +46,7 @@ class Horarios_allView(ModelViewSet):
 
         
     @action(detail=True, methods=['get'])    
-    def retrieve_horario(self, request, pk=None,horario_pk=None):
+    def retrieve_horario(self, request,horario_pk=None):
         try:
             horario = self.get_horario(horario_id=horario_pk)
             serializer = Horario_with_studentes_Serializer(horario)
@@ -63,7 +63,7 @@ class Horarios_allView(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_horario(self, request, pk=None,horario_pk=None):
+    def delete_horario(self, request,horario_pk=None):
         try:
             horario = self.get_horario(horario_id=horario_pk)
             horario.delete()
@@ -72,7 +72,7 @@ class Horarios_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['put'])
-    def update_horario(self, request, pk=None,horario_pk=None):
+    def update_horario(self, request,horario_pk=None):
         try:
             horario = self.get_horario(horario_id=horario_pk)
             serializer = Horario_with_studentes_Serializer(horario, data=request.data)
