@@ -48,7 +48,7 @@ class Subjects_allView(ModelViewSet):
     def retrieve_subject(self, request, pk=None,course_pk=None):
         try:
             subject = self.get_subject(subject_id=pk)
-            serializer = Subjects_with_students_Serializer(subject)
+            serializer = Subjects_with_students_Serializer(subject,context={'request':request})
             return Response(serializer.data)
         except Subjects.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -82,7 +82,8 @@ class Subjects_allView(ModelViewSet):
         except Subjects.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-@permission_classes([IsOwnerOrReadOnly & IsProfesorOrReadOnly])
+#@permission_classes([IsOwnerOrReadOnly & IsProfesorOrReadOnly])
+@permission_classes([IsAuthenticated])
 class SubjectsAlumnos(ModelViewSet):
     def get_alumnos(self, request, pk=None):
         try:
