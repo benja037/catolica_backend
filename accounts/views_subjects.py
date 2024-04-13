@@ -118,3 +118,34 @@ class SubjectsAlumnos(ModelViewSet):
         except Subjects.DoesNotExist:
             return Response({"message": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
+@permission_classes([IsAuthenticated])
+class SubjectsAlumnosAuto(ModelViewSet):
+    def get_student(self,request):        
+        try:
+            student = Students.objects.get(admin=request.user)          #Falta poner que si es profesor no pueda usar esta vista  
+            return student
+        except Students.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+    def post_alumno_auto(self, request, pk=None):
+        try:            
+            alumno = self.get_student(request)  # Suponiendo que envías el ID del alumno en el cuerpo de la solicitud
+            #alumno = Students.objects.get(id=alumno_id)
+            subject = Subjects.objects.get(id=pk)
+            subject.alumnos.add(alumno)
+            return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
+        except Students.DoesNotExist:
+            return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Subjects.DoesNotExist:
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+    def delete_alumno_auto(self,request, pk=None):
+        try:
+            alumno = self.get_student(request)
+            subject = Subjects.objects.get(id=pk)
+            subject.alumnos.remove(alumno)
+            return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        except Students.DoesNotExist:
+            return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Subjects.DoesNotExist:
+            return Response({"message": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
