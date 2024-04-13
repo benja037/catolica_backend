@@ -38,6 +38,8 @@ urlpatterns = [
     path('courses/<int:course_pk>/subjectss/<int:pk>/', views_subjects.Subjects_allView.as_view({'get': 'retrieve_subject', 'put': 'update_subject', 'delete': 'delete_subject'}), name='subject-detail'),
     path('subjects/<int:pk>/alumnos/', views_subjects.SubjectsAlumnos.as_view({'get': 'get_alumnos', 'post': 'post_alumno', 'delete': 'delete_alumno'}), name='subject-add_alumno'),
 
+    path('subjects/<int:pk>/alumnos-auto/', views_subjects.SubjectsAlumnosAuto.as_view({'post': 'post_alumno_auto', 'delete': 'delete_alumno_auto'}), name='horario-add_alumno'),
+
     path('courses/', views_courses.Courses_allView.as_view({'get': 'list_courses', 'post': 'create_course'}), name='courses-list'),
     path('courses/<int:course_pk>/', views_courses.Courses_allView.as_view({'get': 'retrieve_courses', 'put': 'update_course', 'delete': 'delete_course'}), name='subject-detail'),
 
@@ -46,6 +48,9 @@ urlpatterns = [
     path('subjectss/<int:pk>/horarios/<int:horario_pk>/', views_horarios.Horarios_allView.as_view({'get': 'retrieve_horario', 'put': 'update_horario', 'delete': 'delete_horario'}), name='horario-detail'),
     path('horarios/<int:horario_pk>/alumnos/', views_horarios.CursoMateriaAlumnos.as_view({'get': 'get_alumnos', 'post': 'post_alumno', 'delete': 'delete_alumno'}), name='horario-add_alumno'),
     #Este delete pide "alumno_pk"
+    
+    
+    
     
     path('horarios/<int:horario_pk>/clases/', views_clases.Clases_allView.as_view({'get': 'list_clases', 'post': 'create_clase'}), name='clase-list'),
     path('horarios/<int:horario_pk>/clases/<int:clase_pk>/', views_clases.Clases_allView.as_view({'get': 'retrieve_clase', 'put': 'update_clase', 'delete': 'delete_clase'}), name='clase-detail'),
