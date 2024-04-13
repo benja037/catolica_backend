@@ -45,7 +45,8 @@ urlpatterns = [
 
      
     path('subjectss/<int:pk>/horarios/', views_horarios.Horarios_allView.as_view({'get': 'list_horarios', 'post': 'create_horario'}), name='horario-list'),
-    path('subjectss/<int:pk>/horarios/<int:horario_pk>/', views_horarios.Horarios_allView.as_view({'get': 'retrieve_horario', 'put': 'update_horario', 'delete': 'delete_horario'}), name='horario-detail'),
+    path('horarios/<int:horario_pk>/', views_horarios.Horarios_allView.as_view({'get': 'retrieve_horario', 'put': 'update_horario', 'delete': 'delete_horario'}), name='horario-detail'),
+    #Ultimo cambio se saca subjects para ver el id de un horario, al parecer despues hay que hacer lo mismo con las otras urls
     path('horarios/<int:horario_pk>/alumnos/', views_horarios.CursoMateriaAlumnos.as_view({'get': 'get_alumnos', 'post': 'post_alumno', 'delete': 'delete_alumno'}), name='horario-add_alumno'),
     #Este delete pide "alumno_pk"
     
