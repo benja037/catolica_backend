@@ -9,7 +9,7 @@ class StudentsDisplay(admin.ModelAdmin):
 admin.site.register(Students,StudentsDisplay)
 class TeachersDisplay(admin.ModelAdmin):
     list_display = ('id','gender','firstname','lastname')
-admin.site.register(Teachers)
+admin.site.register(Teachers,TeachersDisplay)
 class CoursesDisplay(admin.ModelAdmin):
     list_display = ('course_name','id')
 admin.site.register(Courses,CoursesDisplay)

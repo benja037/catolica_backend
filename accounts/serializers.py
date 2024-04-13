@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Clase, Courses, Horario, Teachers, User
 from rest_framework.validators import ValidationError
-
+from rest_framework import status
 
 from .models import Students, Subjects,Attendance
 
@@ -54,6 +54,41 @@ class Subjects_with_students_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Subjects
         fields=['id','subject_name','staff_id','alumnos']
+        
+    def get_student(self,request):        
+        try:
+            teacher = Students.objects.get(admin=request.user)            
+            return teacher
+        except Students.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND 
+        
+    def get_teacher(self,request):        
+        try:
+            teacher = Teachers.objects.get(admin=request.user)            
+            return teacher
+        except Teachers.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND 
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        if request and request.user.user_type == 'alumno':
+            # Verificar si el alumno está inscrito
+            alumno_id = self.get_student(request)
+            alumnos_inscritos = [alumno['id'] for alumno in representation['alumnos']]
+            if alumno_id.id in alumnos_inscritos:
+                representation['rolled'] = True
+            else:
+                representation['rolled'] = False
+        if request and request.user.user_type == 'profesor':
+            # Verificar si el alumno está inscrito
+            teacher_id = self.get_teacher(request)
+            #alumnos_inscritos = [alumno['id'] for alumno in representation['alumnos']]
+            if teacher_id.id == representation['staff_id']:
+                representation['rolled'] = True
+            else:
+                representation['rolled'] = False
+        return representation
 #Update specific subject
 class Subjects_all_edit(serializers.ModelSerializer):
     alumnos = StudentsSerializer(many=True, read_only=True)
