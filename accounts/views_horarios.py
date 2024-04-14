@@ -49,7 +49,7 @@ class Horarios_allView(ModelViewSet):
     def retrieve_horario(self, request,horario_pk=None):
         try:
             horario = self.get_horario(horario_id=horario_pk)
-            serializer = Horario_with_studentes_Serializer(horario)
+            serializer = Horario_with_studentes_Serializer(horario,context={'request':request})
             return Response(serializer.data)
         except Horario.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
