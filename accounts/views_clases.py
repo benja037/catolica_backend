@@ -45,7 +45,7 @@ class Clases_allView(ModelViewSet):
 
         
     @action(detail=True, methods=['get'])    
-    def retrieve_clase(self, request,clase_pk=None,horario_pk=None):
+    def retrieve_clase(self, request,clase_pk=None):
         try:
             clase = self.get_clase(clase_id=clase_pk)
             serializer = ClaseSerializer(clase)
@@ -62,7 +62,7 @@ class Clases_allView(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_clase(self, request,clase_pk=None,horario_pk=None):
+    def delete_clase(self, request,clase_pk=None):
         try:
             clase = self.get_clase(clase_id=clase_pk)
             clase.delete()
@@ -71,7 +71,7 @@ class Clases_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['put'])
-    def update_clase(self, request,clase_pk=None,horario_pk=None):
+    def update_clase(self, request,clase_pk=None):
         try:
             clase = self.get_clase(clase_id=clase_pk)
             serializer = ClaseSerializer(clase, data=request.data)
