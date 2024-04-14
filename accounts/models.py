@@ -130,7 +130,7 @@ class Clase(models.Model):
     horario_id=models.ForeignKey('Horario',on_delete=models.PROTECT,null=True)
     ESTADOS_CHOICES = [('proximamente', 'proximamente'),('realizada', 'realizada'),('realizada-parcial','realizada-parcial'), ('cancelada','cancelada')]
     estado=models.CharField(choices = ESTADOS_CHOICES,max_length=255,default='proximamente')
-    
+    #Deberia la clase tener profesor? probablemente
 
 class Attendance(models.Model):
 
