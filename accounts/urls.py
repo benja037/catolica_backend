@@ -49,7 +49,8 @@ urlpatterns = [
     #Ultimo cambio se saca subjects para ver el id de un horario, al parecer despues hay que hacer lo mismo con las otras urls
     path('horarios/<int:horario_pk>/alumnos/', views_horarios.CursoMateriaAlumnos.as_view({'get': 'get_alumnos', 'post': 'post_alumno', 'delete': 'delete_alumno'}), name='horario-add_alumno'),
     #Este delete pide "alumno_pk"
-    
+    path('horarios/<int:horario_pk>/alumnos-auto/', views_horarios.HorarioAlumnosAuto.as_view({'post': 'post_alumno_auto', 'delete': 'delete_alumno_auto'}), name='horario-add_alumno'),
+
     
     
     

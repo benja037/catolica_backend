@@ -117,4 +117,36 @@ class CursoMateriaAlumnos(ModelViewSet):
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         except Horario.DoesNotExist:
             return Response({"message": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+@permission_classes([IsAuthenticated])
+class HorarioAlumnosAuto(ModelViewSet):
+    def get_student(self,request):        
+        try:
+            student = Students.objects.get(admin=request.user)          #Falta poner que si es profesor no pueda usar esta vista  
+            return student
+        except Students.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+    def post_alumno_auto(self, request, horario_pk=None):
+        try:            
+            alumno = self.get_student(request)  # Suponiendo que envías el ID del alumno en el cuerpo de la solicitud
+            #alumno = Students.objects.get(id=alumno_id)
+            horario = Horario.objects.get(id=horario_pk)
+            horario.alumnos_horario.add(alumno)
+            return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
+        except Horario.DoesNotExist:
+            return Response({"message": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Subjects.DoesNotExist:
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+    def delete_alumno_auto(self,request, horario_pk=None):
+        try:
+            alumno = self.get_student(request)
+            horario = Horario.objects.get(id=horario_pk)
+            horario.alumnos_horario.remove(alumno)
+            return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        except Horario.DoesNotExist:
+            return Response({"message": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Students.DoesNotExist:
+            return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
         

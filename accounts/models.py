@@ -91,7 +91,7 @@ class Courses(models.Model):
 
 class Students(models.Model):
     id=models.AutoField(primary_key=True)
-    admin=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
+    admin=models.ForeignKey(User,on_delete=models.CASCADE,null=True) #Bien null true y agregar rut importante
     date_of_birth=models.DateField(null=True)
     firstname = models.CharField(max_length=45,null=True)
     lastname = models.CharField(max_length=45,null=True)
