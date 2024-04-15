@@ -126,7 +126,8 @@ class Horario(models.Model):
 
 class Clase(models.Model):
     id=models.AutoField(primary_key=True)
-    date_and_hour= models.DateTimeField()
+    date= models.DateField()
+    time=models.TimeField()
     horario_id=models.ForeignKey('Horario',on_delete=models.PROTECT,null=True)
     ESTADOS_CHOICES = [('proximamente', 'proximamente'),('realizada', 'realizada'),('realizada-parcial','realizada-parcial'), ('cancelada','cancelada')]
     estado=models.CharField(choices = ESTADOS_CHOICES,max_length=255,default='proximamente')
@@ -139,7 +140,7 @@ class Attendance(models.Model):
             
     id=models.AutoField(primary_key=True)
     student_id=models.ForeignKey('Students',on_delete=models.PROTECT, null=True)
-    clase_id=models.ForeignKey('Clase',on_delete=models.CASCADE,null=True)       
+    clase_id=models.ForeignKey('Clase',on_delete=models.CASCADE,null=True)   #Si la clase se elimina se eliminan las asistencias , por un lado esta bien
     estado=models.BooleanField(default=False)
     user_estado_previo=models.CharField(choices = ESTADO_PREVIO_CHOICES,max_length=255,default='no-responde')
     created_at=models.DateTimeField(auto_now_add=True)
