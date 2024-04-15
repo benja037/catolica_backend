@@ -24,5 +24,5 @@ class HorarioDisplay(admin.ModelAdmin):
 admin.site.register(Horario,HorarioDisplay)
 
 class ClaseDisplay(admin.ModelAdmin):
-    list_display = ('id',)
-admin.site.register(Clase,ClaseDisplay)
+    list_display = ('id')
+admin.site.register(Clase)

@@ -106,7 +106,7 @@ class ClaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Clase
-        fields=['id','date_and_hour','horario_id','estado']
+        fields=['id','date','time','horario_id','estado']
 
 class HorarioSerializer(serializers.ModelSerializer):
 
