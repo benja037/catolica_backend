@@ -54,7 +54,7 @@ class Clases_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
    
     @action(detail=False, methods=['post'])
-    def create_clase(self, request,clase_pk=None,horario_pk=None):
+    def create_clase(self, request,horario_pk=None):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(horario_id=Horario.objects.get(id=horario_pk))
