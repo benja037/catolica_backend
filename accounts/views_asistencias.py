@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import AttendanceSerializer, AttendanceSerializerOnlyEstadoChange, Horario_with_studentes_Serializer, HorarioSerializer, StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer,ClaseSerializer
+from accounts.serializers import AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyEstadoChange, Horario_with_studentes_Serializer, HorarioSerializer, StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer,ClaseSerializer
 
 from .models import Attendance, Clase, Horario, Students,Subjects,Courses, Teachers, User
 from rest_framework.permissions import IsAuthenticated
@@ -38,7 +38,7 @@ class Asistencias_allView(ModelViewSet):
     def list_asistencias(self,request,clase_pk=None,asistencia_pk=None):
         try:            
             filtro = Attendance.objects.filter(clase_id=clase_pk) 
-            serializer = AttendanceSerializer(filtro, many=True)
+            serializer = AttendanceSerializerNameLastname(filtro, many=True)
             return Response(serializer.data)
         except Attendance.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)

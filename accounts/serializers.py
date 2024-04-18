@@ -40,6 +40,10 @@ class StudentsSerializer(serializers.ModelSerializer):
     class Meta:
         model= Students
         fields=['id','admin','gender','date_of_birth','firstname','lastname']
+class SimpleStudentsSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model= Students
+        fields=['id','firstname','lastname']
 
 #----------Subjects Serializer-------------------
 #Get all subjects
@@ -162,12 +166,12 @@ class AttendanceSerializer(serializers.ModelSerializer):
         fields=['id','student_id','clase_id','estado','user_estado_previo']
 
 
-class AttendanceSerializerOnlyDateandHour(serializers.ModelSerializer):
-    
+class AttendanceSerializerNameLastname(serializers.ModelSerializer):
+    user_estado_previo =serializers.ReadOnlyField()
+    student = SimpleStudentsSerializer(source='student_id', read_only=True)
     class Meta:
         model = Attendance
-        fields=['dateandhour']
-
+        fields=['id','student','clase_id','estado','user_estado_previo']
 class AttendanceSerializerOnlyEstadoChange(serializers.ModelSerializer):        
     user_estado_previo =serializers.ReadOnlyField()    
     class Meta:

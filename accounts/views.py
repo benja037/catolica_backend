@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from django_crud_api import settings
-from .serializers import AddSubjectsSerializer, CourseSerializer, HorarioSerializer, SignUpSerializer,SubjectsSerializer,StudentsSerializer,UserSerializer,AttendanceSerializer,AttendanceSerializerOnlyDateandHour
+from .serializers import AddSubjectsSerializer, CourseSerializer, HorarioSerializer, SignUpSerializer,SubjectsSerializer,StudentsSerializer,UserSerializer,AttendanceSerializer
 from rest_framework import generics,status,viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -35,14 +35,7 @@ class SubjectAttendanceAPIView(APIView):
         except Subjects.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND
 
-    def get(self, request, subject_id, format=None):
-        subject = self.get_subject(subject_id)
-        students = subject.alumnos.all()
-        subject_attendances = Attendance.objects.filter(subject_id=subject_id).distinct('dateandhour')
-        serializer = StudentsSerializer(students, many=True)
-        
-        serializer_attendace = AttendanceSerializerOnlyDateandHour(subject_attendances, many=True)
-        return Response(status=status.HTTP_200_OK,data = {"lista_alumnos":serializer.data,"Asistencias":serializer_attendace.data})
+    
     
 
     def post(self, request, subject_id, format=None):
