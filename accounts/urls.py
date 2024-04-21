@@ -59,6 +59,8 @@ urlpatterns = [
 
     path('clases/<int:clase_pk>/asistencias/', views_asistencias.Asistencias_allView.as_view({'get': 'list_asistencias', 'post': 'create_asistencia'}), name='asistencia-list'),
     path('asistencias/<int:asistencia_pk>/', views_asistencias.Asistencias_allView.as_view({'get': 'retrieve_asistencia', 'put': 'update_asistencia', 'delete': 'delete_asistencia'}), name='asistencia-detail'),
+    #Hacer URL que devuelva la cantidad de asistencias e inasistencias de un alumno
+    #path('asistencias/<int:alumno_pk>/'),
     path('clases/<int:clase_pk>/asistencias/create-default/', views_asistencias.AttendanceOfClass.as_view({'post': 'create_default'}), name='asistencia-create-default'),
     #El de arriba esta bien crea todas las asistencias de los alumnos del horario pero el horario lo consigue la funcion
     #path('courses/<int:course_pk>/subjectss2/', views_subjects_2.Subjects_allView.as_view({'get': 'list'}), name='subjects-list2'),

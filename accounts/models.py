@@ -103,13 +103,14 @@ class Students(models.Model):
     
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    #subjects = models.ManyToManyField(Subjects)
+    #subjects = models.ManyToManyField(Subjects) nono
  
 
 class Subjects(models.Model):
     id=models.AutoField(primary_key=True)
     subject_name=models.CharField(max_length=255)
     course_id=models.ForeignKey('Courses',on_delete=models.SET_NULL, null=True)
+    #profesores=models.ManyToManyField(Teachers) #Cambio Importante
     staff_id=models.ForeignKey('Teachers',on_delete=models.SET_NULL, null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
@@ -122,6 +123,8 @@ class Horario(models.Model):
     day_of_week = models.CharField(choices = DAYS_CHOICES,max_length=15,default=None)  
     time= models.TimeField()
     alumnos_horario = models.ManyToManyField(Students,blank=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
 
 class Clase(models.Model):
@@ -132,6 +135,9 @@ class Clase(models.Model):
     ESTADOS_CHOICES = [('proximamente', 'proximamente'),('realizada', 'realizada'),('realizada-parcial','realizada-parcial'), ('cancelada','cancelada')]
     estado=models.CharField(choices = ESTADOS_CHOICES,max_length=255,default='proximamente')
     #Deberia la clase tener profesor? probablemente
+    #staff_id=models.ForeignKey('Teachers',on_delete=models.SET_NULL, null=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
 class Attendance(models.Model):
 
@@ -146,6 +152,14 @@ class Attendance(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
    
+
+""" class SolicitudSubject(models.Model):
+    id=models.AutoField(primary_key=True)
+    subject_id = models.ForeignKey('Subjects',on_delete=models.CASCADE,null=True)   
+    #TIPO_CHOICES = [('peticion-profesor','peticion-profesor'),('peticion-alumno','peticion-profesor')]
+    #tipo =models.CharField(choices = TIPO_CHOICES,max_length=255,default='no-responde') """
+
+
 
 @receiver(post_save,sender=User)
 def create_user_profile(sender,instance,created,**kwargs):
