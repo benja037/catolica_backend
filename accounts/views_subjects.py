@@ -6,7 +6,7 @@ from rest_framework.decorators import action,permission_classes
 from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
 from accounts.serializers import StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer
 
-from .models import Students,Subjects,Courses, Teachers, User
+from .models import Students,Subjects,Courses, Teachers, User,Horario
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
@@ -112,6 +112,10 @@ class SubjectsAlumnos(ModelViewSet):
             alumno = Students.objects.get(id=alumno_id)
             subject = Subjects.objects.get(id=pk)
             subject.alumnos.remove(alumno)
+            horarios = Horario.objects.filter(subject_id=subject)
+            for horario in horarios:
+                horario.alumnos_horario.remove(alumno)
+            #Horario.objects.filter(alumnos_horario=instance.alumnos.all()).delete()
             return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
         except Students.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
