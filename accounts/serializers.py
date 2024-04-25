@@ -47,17 +47,19 @@ class SimpleStudentsSerializer(serializers.ModelSerializer):
 
 #----------Subjects Serializer-------------------
 #Get all subjects
-class SubjectsSerializer(serializers.ModelSerializer):    
+class SubjectsSerializer(serializers.ModelSerializer):  
+    profesores = TeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subjects
-        fields=['id','subject_name','staff_id','course_id']
+        fields=['id','subject_name','profesores','course_id']
 
 #Get specific subject
 class Subjects_with_students_Serializer(serializers.ModelSerializer):
     alumnos = StudentsSerializer(many=True, read_only=True)
+    profesores = TeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subjects
-        fields=['id','subject_name','staff_id','alumnos']
+        fields=['id','subject_name','profesores','alumnos']
         
     def get_student(self,request):        
         try:
@@ -95,16 +97,17 @@ class Subjects_with_students_Serializer(serializers.ModelSerializer):
         return representation
 #Update specific subject
 class Subjects_all_edit(serializers.ModelSerializer):
+    profesores = TeacherSerializer(many=True, read_only=True)  
     alumnos = StudentsSerializer(many=True, read_only=True)
     class Meta:
         model = Subjects
-        fields=['id','subject_name','staff_id','alumnos','finished']
+        fields=['id','subject_name','profesores','alumnos','finished']
 
 
 class AddSubjectsSerializer(serializers.ModelSerializer):    
     class Meta:
         model = Subjects
-        fields=['course_id','subject_name','staff_id']
+        fields=['course_id','subject_name','profesores']
 
 class ClaseSerializer(serializers.ModelSerializer):
 
