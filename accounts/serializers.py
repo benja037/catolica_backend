@@ -89,9 +89,9 @@ class Subjects_with_students_Serializer(serializers.ModelSerializer):
         if request and request.user.user_type == 'profesor':
             # Verificar si el alumno está inscrito
             teacher_id = self.get_teacher(request)
-            #alumnos_inscritos = [alumno['id'] for alumno in representation['alumnos']]
-            if teacher_id.id == representation['staff_id']:
-                representation['rolled'] = True
+            teachers_inscritos = [teacher['id'] for teacher in representation['profesores']]
+            if teacher_id.id in teachers_inscritos:
+                representation['rolled'] = True            
             else:
                 representation['rolled'] = False
         return representation
