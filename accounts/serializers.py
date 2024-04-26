@@ -110,10 +110,10 @@ class AddSubjectsSerializer(serializers.ModelSerializer):
         fields=['course_id','subject_name','profesores']
 
 class ClaseSerializer(serializers.ModelSerializer):
-
+    staff_id = TeacherSerializer(many=True,read_only=True)
     class Meta:
         model = Clase
-        fields=['id','date','time','horario_id','estado']
+        fields=['id','date','horario_id','estado','staff_id']
 
 class HorarioSerializer(serializers.ModelSerializer):
 
