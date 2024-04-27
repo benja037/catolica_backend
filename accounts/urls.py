@@ -55,6 +55,7 @@ urlpatterns = [
     
     
     
+    path('subjects/<int:subject_pk>/horarios/clases/', views_clases.Subjects_Clases_allView.as_view({'get': 'list'}), name='subject-allHorarios-clase-list'),
     path('horarios/<int:horario_pk>/clases/', views_clases.Clases_allView.as_view({'get': 'list_clases', 'post': 'create_clase'}), name='clase-list'),
     path('clases/<int:clase_pk>/', views_clases.Clases_allView.as_view({'get': 'retrieve_clase', 'put': 'update_clase', 'delete': 'delete_clase'}), name='clase-detail'),
 

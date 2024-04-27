@@ -78,6 +78,24 @@ class Clases_allView(ModelViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) #Hay que arreglar los errores las excepciones
         except Clase.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+@permission_classes([IsOwnerOrReadOnly & IsProfesorOrReadOnly])
+class Subjects_Clases_allView(ModelViewSet):
+    serializer_class = ClaseSerializer
+    queryset = Clase.objects.all()
+    
+    def list(self,request,subject_pk=None):
+        try:       
+            horarios = Horario.objects.filter(subject_id=subject_pk)
+            all_classes = []
+            for horario in horarios:
+                clases = Clase.objects.filter(horario_id=horario.id)
+                clase_data = ClaseSerializer(clases, many=True).data
+                all_classes.extend(clase_data)
+            return Response(all_classes)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
+        
