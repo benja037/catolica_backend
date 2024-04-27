@@ -87,12 +87,12 @@ class Subjects_Clases_allView(ModelViewSet):
     serializer_class = ClaseSerializer
     queryset = Clase.objects.all()
     
-    def list(self,request,subject_pk=None):
+    def list(self,request,subject_pk=None,date=None):
         try:       
             horarios = Horario.objects.filter(subject_id=subject_pk)
             all_classes = []
             for horario in horarios:
-                clases = Clase.objects.filter(horario_id=horario.id)
+                clases = Clase.objects.filter(horario_id=horario.id,date=date)
                 clase_data = ClaseSerializer(clases, many=True).data
                 all_classes.extend(clase_data)
             return Response(all_classes)
