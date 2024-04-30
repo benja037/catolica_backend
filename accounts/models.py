@@ -112,8 +112,7 @@ class Subjects(models.Model):
     id=models.AutoField(primary_key=True)
     subject_name=models.CharField(max_length=255)
     course_id=models.ForeignKey('Courses',on_delete=models.SET_NULL, null=True)
-    profesores=models.ManyToManyField(Teachers) #Cambio Importante
-    #staff_id=models.ForeignKey('Teachers',on_delete=models.SET_NULL, null=True)
+    profesores=models.ManyToManyField(Teachers)    
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     alumnos = models.ManyToManyField(Students)
@@ -121,7 +120,7 @@ class Subjects(models.Model):
     public = models.BooleanField(default=False)
     finished = models.BooleanField(default=False)
 
-class Horario(models.Model):
+""" class Horario(models.Model):
     DAYS_CHOICES = [('lunes', 'lunes'),('martes', 'martes'),('miércoles','miércoles'), ('jueves','jueves'), ('viernes','viernes'), ('sábado','sábado'), ('domingo','domingo')]
     subject_id=models.ForeignKey('Subjects',on_delete=models.CASCADE,null=True)
     day_of_week = models.CharField(choices = DAYS_CHOICES,max_length=15,default=None)  
@@ -131,19 +130,38 @@ class Horario(models.Model):
     num_max_alumnos = models.IntegerField(default=0)
     public = models.BooleanField(default=False)
     created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True) """
+class GrupoAlumnos(models.Model):
+    id=models.AutoField(primary_key=True)
+    subject_id = models.ForeignKey(Subjects, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    alumnos = models.ManyToManyField(Students, related_name='grupos')    
+    created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
+    
 
 class Clase(models.Model):
     id=models.AutoField(primary_key=True)
-    date= models.DateField()    
-    horario_id=models.ForeignKey('Horario',on_delete=models.PROTECT,null=True)
+    subject_id=models.ForeignKey('Subjects', on_delete=models.PROTECT, null=True)
+    date= models.DateField()
+    time_start = models.TimeField()
+    time_end = models.TimeField(null=True)     
     ESTADOS_CHOICES = [('proximamente', 'proximamente'),('realizada', 'realizada'),('realizada-parcial','realizada-parcial'), ('cancelada','cancelada')]
     estado=models.CharField(choices = ESTADOS_CHOICES,max_length=255,default='proximamente')
-    #Deberia la clase tener profesor? probablemente
+    alumnos = models.ManyToManyField(Students, related_name='clases',blank=True)
     staff_id=models.ForeignKey('Teachers',on_delete=models.PROTECT, null=True)
+    num_max_alumnos = models.IntegerField(default=0)
+    public = models.BooleanField(default=False)
+    etiqueta = models.CharField(max_length=100, blank=True, null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+
+    def agregar_alumnos_grupo(self, grupo_id):
+        grupo = GrupoAlumnos.objects.get(id=grupo_id)
+        for alumno in grupo.alumnos.all():
+            if alumno not in self.alumnos.all():
+                self.alumnos.add(alumno)
 
 class Attendance(models.Model):
 
@@ -167,6 +185,8 @@ class SolicitudProfesorSubject(models.Model):
     #tipo =models.CharField(choices = TIPO_CHOICES,max_length=255,default='no-responde') 
     ESTADO_CHOICES = [('pendiente','pendiente'),('aceptado','aceptado'),('rechazado','rechazado')]
     estado = models.CharField(max_length=20, default='pendiente')
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
 class SolicitudAlumnoSubject(models.Model):
     id=models.AutoField(primary_key=True)
@@ -176,15 +196,19 @@ class SolicitudAlumnoSubject(models.Model):
     tipo =models.CharField(choices = TIPO_CHOICES,max_length=255,default='no-responde')  """
     ESTADO_CHOICES = [('pendiente','pendiente'),('aceptado','aceptado'),('rechazado','rechazado')]
     estado = models.CharField(max_length=20, default='pendiente')
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
-class SolicitudAlumnoHorario(models.Model):
+class SolicitudAlumnoGrupo(models.Model):
     id=models.AutoField(primary_key=True)
-    horario_id = models.ForeignKey('Horario',on_delete=models.CASCADE,null=True)  
+    grupo_id = models.ForeignKey(GrupoAlumnos,on_delete=models.CASCADE,null=True)  
     student_id=models.ForeignKey('Students',on_delete=models.CASCADE, null=True) 
     TIPO_CHOICES = [('add-alumno','add-alumno'),('remove-alumno','remove-alumno')]
     tipo =models.CharField(choices = TIPO_CHOICES,max_length=255,default='add-alumno') 
     ESTADO_CHOICES = [('pendiente','pendiente'),('aceptado','aceptado'),('rechazado','rechazado')]
     estado = models.CharField(max_length=20, default='pendiente')
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
 
 

@@ -4,9 +4,9 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import HorarioSerializer, Subjects_with_students_Serializer, SubjectsSerializer,ClaseSerializer
+from accounts.serializers import GrupoAlumnosSerializer, Subjects_with_students_Serializer, SubjectsSerializer,ClaseSerializer
 
-from .models import Clase, Horario, Students,Subjects,Courses, Teachers, User
+from .models import Clase, GrupoAlumnos, Students,Subjects,Courses, Teachers, User
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
@@ -15,9 +15,9 @@ class Clases_allView(ModelViewSet):
     serializer_class = ClaseSerializer       
     queryset = Clase.objects.all()
     def get_queryset(self):
-        horario_id = self.request.query_params.get('horario_pk') or None
-        if horario_id is not None:
-            filtro = Clase.objects.filter(horario_id=horario_id) 
+        subject_id = self.request.query_params.get('pk') or None
+        if subject_id is not None:
+            filtro = Clase.objects.filter(subject_id=subject_id) 
             #queryset = Subjects.objects.all()
             serializer = self.serializer_class(filtro, many=True)
         return Response(serializer.data)
@@ -35,9 +35,9 @@ class Clases_allView(ModelViewSet):
         except Clase.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND
     
-    def list_clases(self,request,horario_pk=None,clase_pk=None):
+    def list_clases(self,request,pk=None):
         try:
-            filtro = Clase.objects.filter(horario_id=horario_pk) 
+            filtro = Clase.objects.filter(subject_id=pk) 
             serializer = ClaseSerializer(filtro, many=True)
             return Response(serializer.data)
         except Clase.DoesNotExist:
@@ -54,10 +54,10 @@ class Clases_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
    
     @action(detail=False, methods=['post'])
-    def create_clase(self, request,horario_pk=None):
+    def create_clase(self, request,pk=None):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save(horario_id=Horario.objects.get(id=horario_pk))
+            serializer.save(subject_id=Subjects.objects.get(id=pk))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -87,15 +87,11 @@ class Subjects_Clases_allView(ModelViewSet):
     serializer_class = ClaseSerializer
     queryset = Clase.objects.all()
     
-    def list(self,request,subject_pk=None,date=None):
+    def list(self,request,pk=None,date=None):
         try:       
-            horarios = Horario.objects.filter(subject_id=subject_pk)
-            all_classes = []
-            for horario in horarios:
-                clases = Clase.objects.filter(horario_id=horario.id,date=date)
-                clase_data = ClaseSerializer(clases, many=True).data
-                all_classes.extend(clase_data)
-            return Response(all_classes)
-        except Exception as e:
-            return Response({'error': str(e)}, status=500)
+            clases = Clase.objects.filter(subject_id=pk, date=date)            
+            clase_data = ClaseSerializer(clases, many=True).data                
+            return Response(clase_data)
+        except Clase.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         
