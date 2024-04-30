@@ -4,9 +4,9 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyEstadoChange, Horario_with_studentes_Serializer, HorarioSerializer, StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer,ClaseSerializer
+from accounts.serializers import AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyEstadoChange, GrupoAlumnosSerializer, StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer,ClaseSerializer
 
-from .models import Attendance, Clase, Horario, Students,Subjects,Courses, Teachers, User
+from .models import Attendance, Clase, GrupoAlumnos, Students,Subjects,Courses, Teachers, User
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
@@ -89,18 +89,14 @@ class AttendanceOfClass(ModelViewSet):
 
     def create_default(self, request, clase_pk=None,):
         try:
-            clase = Clase.objects.get(id=clase_pk)            
-            horario_id = clase.horario_id
-            horario = Horario.objects.get(id=horario_id.id)
-            #alumnos= horario.alumnos_horario
-            serializer = Horario_with_studentes_Serializer(horario)
-            alumnos = serializer.data.get('alumnos_horario',[])
+            clase = Clase.objects.get(id=clase_pk)              
+            alumnos = clase.alumnos
             for student in alumnos:
                 student_id = student.get('id')
                 Attendance.objects.create(clase_id=clase,student_id = Students.objects.get(id=student_id),estado=False,user_estado_previo="no-responde")
             return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
         except Clase.DoesNotExist:
             return Response({"message": "Clase no encontrada"}, status=status.HTTP_404_NOT_FOUND)
-        except Horario.DoesNotExist:
-            return Response({"message": "Horario no encontrado"}, status=status.HTTP_404_NOT_FOUND)        
+        except GrupoAlumnos.DoesNotExist:
+            return Response({"message": "Grupo no encontrado"}, status=status.HTTP_404_NOT_FOUND)        
     

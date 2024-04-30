@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Clase, Courses, Horario, Teachers, User
+from .models import Clase, Courses, GrupoAlumnos, Teachers, User
 from rest_framework.validators import ValidationError
 from rest_framework import status
 
@@ -113,21 +113,21 @@ class ClaseSerializer(serializers.ModelSerializer):
     staff_id = TeacherSerializer(read_only=True)
     class Meta:
         model = Clase
-        fields=['id','date','horario_id','estado','staff_id']
+        fields=['id','subject_id','date','time_start','time_end','estado','staff_id','num_max_alumnos','public','etiqueta']
 
-class HorarioSerializer(serializers.ModelSerializer):
-
+class GrupoAlumnosSerializer(serializers.ModelSerializer):
+    alumnos = StudentsSerializer(many=True, read_only=True)
     class Meta:
-        model = Horario
-        fields=['id','day_of_week','time','alumnos_horario','subject_id']
+        model = GrupoAlumnos
+        fields=['id','subject_id','name','time','alumnos']
 
-class Horario_with_studentes_Serializer(serializers.ModelSerializer):
+""" class GrupoAlumnos_with_studentes_Serializer(serializers.ModelSerializer):
     alumnos_horario = StudentsSerializer(many=True, read_only=True)
     class Meta:
-        model = Horario
-        fields=['id','day_of_week','time','alumnos_horario','subject_id']
+        model = GrupoAlumnos
+        fields=['id','day_of_week','time','alumnos','subject_id'] """
         
-    def get_student(self,request):        
+""" def get_student(self,request):        
         try:
             teacher = Students.objects.get(admin=request.user)            
             return teacher
@@ -151,16 +151,17 @@ class Horario_with_studentes_Serializer(serializers.ModelSerializer):
             if alumno_id.id in alumnos_inscritos:
                 representation['rolled'] = True
             else:
-                representation['rolled'] = False
-        """ if request and request.user.user_type == 'profesor':
+                representation['rolled'] = False """
+    
+""" if request and request.user.user_type == 'profesor':
             # Verificar si el alumno está inscrito
             teacher_id = self.get_teacher(request)
             #alumnos_inscritos = [alumno['id'] for alumno in representation['alumnos']]
             if teacher_id.id == representation['staff_id']:
                 representation['rolled'] = True
             else:
-                representation['rolled'] = False """
-        return representation
+                representation['rolled'] = False
+        return representation """
 
 class AttendanceSerializer(serializers.ModelSerializer):
     

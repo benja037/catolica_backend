@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 
-from accounts.models import Attendance, Courses, Horario, Students, Subjects, User
-from accounts.serializers import AttendanceSerializer, CourseSerializer, HorarioSerializer, StudentsSerializer, SubjectsSerializer, UserSerializer
+from accounts.models import Attendance, Courses, GrupoAlumnos, Students, Subjects, User
+from accounts.serializers import AttendanceSerializer, CourseSerializer, GrupoAlumnosSerializer, StudentsSerializer, SubjectsSerializer, UserSerializer
 
 
 
@@ -31,9 +31,9 @@ class CoursesView(ModelViewSet):
     serializer_class = CourseSerializer
     permission_classes = []
 
-class HorarioView(ModelViewSet):
-    queryset = Horario.objects.all()
-    serializer_class = HorarioSerializer
+class GrupoAlumnosView(ModelViewSet):
+    queryset = GrupoAlumnos.objects.all()
+    serializer_class = GrupoAlumnosSerializer
     permission_classes = []
 
     
