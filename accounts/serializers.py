@@ -119,7 +119,7 @@ class GrupoAlumnosSerializer(serializers.ModelSerializer):
     alumnos = StudentsSerializer(many=True, read_only=True)
     class Meta:
         model = GrupoAlumnos
-        fields=['id','subject_id','name','time','alumnos']
+        fields=['id','subject_id','name','alumnos']
 
 """ class GrupoAlumnos_with_studentes_Serializer(serializers.ModelSerializer):
     alumnos_horario = StudentsSerializer(many=True, read_only=True)
