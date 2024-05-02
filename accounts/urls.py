@@ -1,7 +1,7 @@
 from . import views_simple
 from . import views_subjects
 from . import views_courses
-
+from . import views_informes
 from . import views_grupos
 from . import views_clases
 from . import views_asistencias
@@ -51,5 +51,6 @@ urlpatterns = [
     #El de arriba esta bien crea todas las asistencias de los alumnos del horario pero el horario lo consigue la funcion
     #path('courses/<int:course_pk>/subjectss2/', views_subjects_2.Subjects_allView.as_view({'get': 'list'}), name='subjects-list2'),
     #path('all-subjects/', SubjectsView.as_view({'get': 'all_subjects'}), name='all-subjects'),
-
+    path('informe/subjects/<int:pk>/',views_informes.subject_attendance_info, name='subject-attendance-info'),
+   
 ]

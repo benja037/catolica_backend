@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer
+from accounts.serializers import SpecialGetSubjectsSerializer, SpecialPostSubjectsSerializer, StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer
 
 from .models import Students,Subjects,Courses, Teachers, User,GrupoAlumnos
 from rest_framework.permissions import IsAuthenticated
@@ -38,7 +38,7 @@ class Subjects_allView(ModelViewSet):
     def list_subjects(self,request,course_pk=None):
         try:
             filtro = Subjects.objects.filter(course_id=course_pk) 
-            serializer = SubjectsSerializer(filtro, many=True)
+            serializer = SpecialGetSubjectsSerializer(filtro, many=True,context={'request':request})
             return Response(serializer.data)
         except Subjects.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -54,10 +54,18 @@ class Subjects_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
    
     @action(detail=False, methods=['post'])
-    def create_subject(self, request, pk=None,course_pk=None):
-        serializer = self.serializer_class(data=request.data)
+    def create_subject(self, request, pk=None, course_pk=None):
+        serializer = SpecialPostSubjectsSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(staff_id=self.get_teacher(request),course_id=Courses.objects.get(id=course_pk))
+            # Obtenemos el profesor
+            teacher = self.get_teacher(request)
+            course = Courses.objects.get(id=course_pk)  
+            # Creamos la asignatura y la guardamos
+            subject = serializer.save(course_id=course)
+            
+            # Agregamos el profesor a la asignatura
+            subject.profesores.add(teacher)
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
