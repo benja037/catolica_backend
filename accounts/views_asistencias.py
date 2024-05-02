@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyEstadoChange, GrupoAlumnosSerializer, StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer,ClaseSerializer
+from accounts.serializers import AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyEstadoChange
 
 from .models import Attendance, Clase, GrupoAlumnos, Students,Subjects,Courses, Teachers, User
 from rest_framework.permissions import IsAuthenticated
