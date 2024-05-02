@@ -51,21 +51,25 @@ class SimpleStudentsSerializer(serializers.ModelSerializer):
 
 #----------Subjects Serializer-------------------
 #Get all subjects
-class SubjectsSerializer(serializers.ModelSerializer):  
+class SubjectsRetrieveSerializer(serializers.ModelSerializer):  
     profesores = TeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subjects
-        fields=['id','subject_name','profesores','course_id','num_max_alumnos','public','finished']
+        fields=['id','subject_name','profesores','course_id','num_max_alumnos','public','finished']#Falta alumnos
 
-class SpecialPostSubjectsSerializer(serializers.ModelSerializer):  
+class SubjectsPostSerializer(serializers.ModelSerializer):  
     profesores = SpecialTeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subjects
         fields=['id','subject_name','profesores','course_id','num_max_alumnos','public','finished']
-    
+
+class SubjectsPatchSerializer(serializers.ModelSerializer):       
+    class Meta:
+        model = Subjects
+        fields=['id','subject_name','num_max_alumnos','public','finished']    
 
     
-class SpecialGetSubjectsSerializer(serializers.ModelSerializer):  
+class SubjectsGetSerializer(serializers.ModelSerializer):  
     profesores = SpecialTeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subjects
@@ -87,7 +91,14 @@ class SpecialGetSubjectsSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         request = self.context.get('request')
-        
+        if request and request.user.user_type == 'alumno':
+            # Verificar si el alumno está inscrito
+            alumno_id = self.get_student(request)
+            alumnos_inscritos = [alumno['id'] for alumno in representation['alumnos']]
+            if alumno_id.id in alumnos_inscritos:
+                representation['rolled'] = True
+            else:
+                representation['rolled'] = False
         if request and request.user.user_type == 'profesor':
             # Verificar si el alumno está inscrito
             teacher_id = self.get_teacher(request)

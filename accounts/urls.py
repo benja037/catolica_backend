@@ -1,4 +1,3 @@
-from . import views_simple
 from . import views_subjects
 from . import views_courses
 from . import views_informes
@@ -24,7 +23,7 @@ urlpatterns = [
     path('courses/<int:course_pk>/', views_courses.Courses_allView.as_view({'get': 'retrieve_courses', 'put': 'update_course', 'delete': 'delete_course'}), name='subject-detail'),
     #Subjects
     path('courses/<int:course_pk>/subjects/', views_subjects.Subjects_allView.as_view({'get': 'list_subjects', 'post': 'create_subject'}), name='subjects-list'),
-    path('subjects/<int:pk>/', views_subjects.Subjects_allView.as_view({'get': 'retrieve_subject', 'put': 'update_subject', 'delete': 'delete_subject'}), name='subject-detail'),
+    path('subjects/<int:pk>/', views_subjects.Subjects_allView.as_view({'get': 'retrieve_subject', 'patch': 'update_subject', 'delete': 'delete_subject'}), name='subject-detail'),
     path('subjects/<int:pk>/alumnos/', views_subjects.SubjectsAlumnos.as_view({'get': 'get_alumnos', 'post': 'post_alumno', 'delete': 'delete_alumno'}), name='subject-add_alumno'),
     path('subjects/<int:pk>/alumnos-auto/', views_subjects.SubjectsAlumnosAuto.as_view({'post': 'post_alumno_auto', 'delete': 'delete_alumno_auto'}), name='horario-add_alumno'),
     #    

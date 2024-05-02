@@ -5,7 +5,7 @@ from rest_framework.decorators import action,permission_classes
 from rest_framework.views import APIView
 
 from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import GrupoAlumnosSerializer, StudentsSerializer, Subjects_with_students_Serializer, SubjectsSerializer
+from accounts.serializers import GrupoAlumnosSerializer, StudentsSerializer
 
 from .models import  Students,Subjects,Courses, Teachers, User,GrupoAlumnos
 from rest_framework.permissions import IsAuthenticated
