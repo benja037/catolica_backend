@@ -4,6 +4,7 @@ from . import views_informes
 from . import views_grupos
 from . import views_clases
 from . import views_asistencias
+
 from django.urls import path
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView,  TokenVerifyView)
 #from rest_framework import routers
