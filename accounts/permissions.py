@@ -1,5 +1,7 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
-
+from rest_framework import status
+from accounts.models import Subjects, Teachers, User
+from rest_framework.response import Response
 
 class EsCreadorPermiso(BasePermission):
     """
@@ -37,3 +39,26 @@ class IsProfesorOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         return request.user.user_type=="profesor"
+    
+class IsProfesorOfSubjectOrReadOnly(BasePermission):
+    def get_teacher(self,request):        
+        try:
+            teacher = Teachers.objects.get(admin=request.user)            
+            return teacher
+        except User.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+    def get_subject(self, subject_id):
+        try:
+            return Subjects.objects.get(id=subject_id)
+        except Subjects.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+          
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        else:
+            teacher = self.get_teacher(request)
+            subject = self.get_subject(view.kwargs['pk'])
+            if teacher in subject.profesores.all():
+                return True            
+        return(False)

@@ -3,14 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
-from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
+from accounts.permissions import IsOwnerOrReadOnly, IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
 from accounts.serializers import  StudentsSerializer, SubjectsGetSerializer, SubjectsPatchSerializer, SubjectsPostSerializer, SubjectsRetrieveSerializer
 
 from .models import Students,Subjects,Courses, Teachers, User,GrupoAlumnos
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
-@permission_classes([IsOwnerOrReadOnly & IsProfesorOrReadOnly])
+@permission_classes([IsOwnerOrReadOnly & IsProfesorOfSubjectOrReadOnly])
 class Subjects_allView(ModelViewSet):    
     serializer_class = SubjectsRetrieveSerializer       
     queryset = Subjects.objects.all()
@@ -70,12 +70,14 @@ class Subjects_allView(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_subject(self, request, pk=None,course_pk=None):
-        try:
+    def delete_subject(self, request, pk=None):
+        try:            
             subject = self.get_subject(subject_id=pk)
+            # Verificar si el usuario actual es un profesor asociado al objeto subject            
             subject.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except Subjects.DoesNotExist:
+            
+        except Teachers.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['patch'])
