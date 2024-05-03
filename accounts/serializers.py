@@ -52,10 +52,11 @@ class SimpleStudentsSerializer(serializers.ModelSerializer):
 #----------Subjects Serializer-------------------
 #Get all subjects
 class SubjectsRetrieveSerializer(serializers.ModelSerializer):  
-    profesores = TeacherSerializer(many=True, read_only=True)  
+    profesores = TeacherSerializer(many=True, read_only=True)
+    alumnos = StudentsSerializer(many=True, read_only=True)  
     class Meta:
         model = Subjects
-        fields=['id','subject_name','profesores','course_id','num_max_alumnos','public','finished']#Falta alumnos
+        fields=['id','subject_name','profesores','alumnos','course_id','num_max_alumnos','public','finished']
 
 class SubjectsPostSerializer(serializers.ModelSerializer):  
     profesores = SpecialTeacherSerializer(many=True, read_only=True)  
