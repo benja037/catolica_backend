@@ -27,6 +27,7 @@ urlpatterns = [
     path('subjects/<int:pk>/', views_subjects.Subjects_allView.as_view({'get': 'retrieve_subject', 'patch': 'update_subject', 'delete': 'delete_subject'}), name='subject-detail'),
     path('subjects/<int:pk>/alumnos/', views_subjects.SubjectsAlumnos.as_view({'get': 'get_alumnos', 'post': 'post_alumno', 'delete': 'delete_alumno'}), name='subject-add_alumno'),
     path('subjects/<int:pk>/alumnos-auto/', views_subjects.SubjectsAlumnosAuto.as_view({'post': 'post_alumno_auto', 'delete': 'delete_alumno_auto'}), name='horario-add_alumno'),
+    path('subjects/<int:pk>/profesor-go-off/', views_subjects.SubjectsAlumnosAuto.as_view({'post': 'post_alumno_auto', 'delete': 'delete_alumno_auto'}), name='horario-add_alumno'),
     #    
     path('subjects/<int:pk>/grupos/', views_grupos.Grupos_allView.as_view({'get': 'list_grupos', 'post': 'create_grupo'}), name='grupo-list'),
     path('grupos/<int:grupo_pk>/', views_grupos.Grupos_allView.as_view({'get': 'retrieve_grupo', 'put': 'update_grupo', 'delete': 'delete_grupo'}), name='grupo-detail'),
