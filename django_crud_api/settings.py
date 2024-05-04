@@ -15,8 +15,9 @@ from pathlib import Path
 from datetime import timedelta
 import environ
 import os
+from dotenv import load_dotenv
 
-env = environ.Env()
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,11 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = ['.vercel.app','127.0.0.1']
 
@@ -136,16 +137,19 @@ WSGI_APPLICATION = 'django_crud_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-""" DATABASE_NAME = os.environ.get("POSTGRES_DATABASE")
-DATABASE_USER = os.environ.get("POSTGRES_USER") """
+DATABASE_NAME = os.getenv("POSTGRES_DATABASE")
+DATABASE_USER = os.getenv("POSTGRES_USER")
+DATABASE_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+DATABASE_HOST = os.getenv("POSTGRES_HOST")
+DATABASE_PORT = os.getenv("POSTGRES_PORT")
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        'NAME': 'catolicadb',
-        'USER': 'fl0user',
-        'PASSWORD': 'KSr4ijlb5kXV',
-        'HOST': 'ep-polished-tooth-a57ccoif.us-east-2.aws.neon.fl0.io',
-        'PORT': '5432',
+        'NAME': DATABASE_NAME,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': DATABASE_HOST,
+        'PORT': DATABASE_PORT,
     }
 }
 
