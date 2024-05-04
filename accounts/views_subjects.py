@@ -6,7 +6,7 @@ from rest_framework.decorators import action,permission_classes
 from accounts.permissions import IsOwnerOrReadOnly, IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
 from accounts.serializers import  StudentsSerializer, SubjectsGetSerializer, SubjectsPatchSerializer, SubjectsPostSerializer, SubjectsRetrieveSerializer
 
-from .models import Students,Subjects,Courses, Teachers, User,GrupoAlumnos
+from .models import Clase, Students,Subjects,Courses, Teachers, User,GrupoAlumnos
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
@@ -160,6 +160,29 @@ class SubjectsAlumnosAuto(ModelViewSet):
             return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
         except Students.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Subjects.DoesNotExist:
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+@permission_classes([IsAuthenticated,IsProfesorOfSubjectOrReadOnly])
+class SubjectsExitProfesor(ModelViewSet):
+    def get_teacher(self,request):        
+        try:
+            teacher = Teachers.objects.get(admin=request.user)            
+            return teacher
+        except User.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+    def get_subject(self, subject_id):
+        try:
+            return Subjects.objects.get(id=subject_id)
+        except Subjects.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+
+    def exit_profesor_auto(self,request, pk=None):
+        try:
+            teacher = self.get_teacher(request)
+            subject = Subjects.objects.get(id=pk)
+            subject.profesores.remove(teacher)
+            Clase.objects.filter(subject_id=subject,staff_id=teacher,estado='proximamente').update(staff_id=None)
+            return Response({"message": "Teacher eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)       
         except Subjects.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
