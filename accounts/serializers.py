@@ -7,7 +7,7 @@ from rest_framework import status
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model= User
-        fields=['id','email','username','gender','date_of_birth','firstname','lastname','phone_number','user_type']
+        fields=['id','email','gender','date_of_birth','firstname','lastname','phone_number','user_type']
 
 class TeacherSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)

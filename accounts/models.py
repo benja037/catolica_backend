@@ -77,6 +77,7 @@ class Teacher(models.Model):
     date_of_birth=models.DateField(null=True)
     firstname = models.CharField(max_length=45)
     lastname = models.CharField(max_length=45)
+    verified = models.BooleanField(default=False)
     def __str__(self):
         return self.firstname + self.lastname
     
