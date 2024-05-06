@@ -3,186 +3,190 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
-from accounts.permissions import IsOwnerOrReadOnly, IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import  StudentsSerializer, SubjectsGetSerializer, SubjectsPatchSerializer, SubjectsPostSerializer, SubjectsRetrieveSerializer
+from accounts.permissions import  IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
+from accounts.serializers import  StudentSerializer, SubjectRetrieveSerializer, SubjectGetSerializer, SubjectPatchSerializer, SubjectPostSerializer
 
-from .models import Clase, Students,Subjects,Courses, Teachers, User,GrupoAlumnos
+from .models import ClassInstance, Student,Subject,Discipline, Teacher, User,StudentGroup
 from rest_framework.permissions import IsAuthenticated
 
-#List [ID,subject_name,staff_id] /subjectss/
-@permission_classes([IsOwnerOrReadOnly & IsProfesorOfSubjectOrReadOnly])
+@permission_classes([IsProfesorOfSubjectOrReadOnly])
 class Subjects_allView(ModelViewSet):    
-    serializer_class = SubjectsRetrieveSerializer       
-    queryset = Subjects.objects.all()
+    serializer_class = SubjectRetrieveSerializer       
+    queryset = Subject.objects.all()
     def get_queryset(self):
-        course_id = self.request.query_params.get('course_pk') or None
-        if course_id is not None:
-            filtro = Subjects.objects.filter(course_id=course_id) 
-            #queryset = Subjects.objects.all()
-            serializer = self.serializer_class(filtro, many=True)
+        discipline_pk = self.request.query_params.get('discipline_pk') or None
+        if discipline_pk is not None:
+            subjects_of_discipline = Subject.objects.filter(discipline=discipline_pk)         
+            serializer = self.serializer_class(subjects_of_discipline, many=True)
         return Response(serializer.data)
 
 
     def get_teacher(self,request):        
         try:
-            teacher = Teachers.objects.get(admin=request.user)            
+            teacher = Teacher.objects.get(user=request.user)            
             return teacher
-        except User.DoesNotExist:
+        except Teacher.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND    
     def get_subject(self, subject_id):
         try:
-            return Subjects.objects.get(id=subject_id)
-        except Subjects.DoesNotExist:
+            return Subject.objects.get(id=subject_id)
+        except Subject.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND
     
-    def list_subjects(self,request,course_pk=None):
+    def list_subjects(self,request,discipline_pk=None):
         try:
-            filtro = Subjects.objects.filter(course_id=course_pk) 
-            serializer = SubjectsGetSerializer(filtro, many=True,context={'request':request})
+            subjects_of_discipline = Subject.objects.filter(discipline=discipline_pk) 
+            serializer = SubjectGetSerializer(subjects_of_discipline, many=True,context={'request':request})
             return Response(serializer.data)
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         
     @action(detail=True, methods=['get'])    
-    def retrieve_subject(self, request, pk=None,course_pk=None):
+    def retrieve_subject(self, request, subject_pk=None):
         try:
-            subject = self.get_subject(subject_id=pk)
-            serializer = SubjectsRetrieveSerializer(subject,context={'request':request})
+            subject = self.get_subject(subject=subject_pk)
+            serializer = SubjectRetrieveSerializer(subject,context={'request':request})
             return Response(serializer.data)
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
    
     @action(detail=False, methods=['post'])
-    def create_subject(self, request, pk=None, course_pk=None):
-        serializer = SubjectsPostSerializer(data=request.data)
+    def create_subject(self, request, discipline_pk=None):
+        serializer = SubjectPostSerializer(data=request.data)
         if serializer.is_valid():
-            # Obtenemos el profesor
             teacher = self.get_teacher(request)
-            course = Courses.objects.get(id=course_pk)  
-            # Creamos la asignatura y la guardamos
-            subject = serializer.save(course_id=course)
+            discipline = Discipline.objects.get(id=discipline_pk)  
+           
+            subject = serializer.save(discipline=discipline)
             
-            # Agregamos el profesor a la asignatura
-            subject.profesores.add(teacher)
+           
+            subject.teachers.add(teacher)
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_subject(self, request, pk=None):
+    def delete_subject(self, request, subject_pk=None):
         try:            
-            subject = self.get_subject(subject_id=pk)
-            # Verificar si el usuario actual es un profesor asociado al objeto subject            
+            subject = self.get_subject(subject_id=subject_pk)
+              
             subject.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
             
-        except Teachers.DoesNotExist:
+        except Teacher.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['patch'])
-    def update_subject(self, request, pk=None):
+    def update_subject(self, request, subject_pk=None):
         try:
-            subject = self.get_subject(subject_id=pk)
-            serializer = SubjectsPatchSerializer(subject, data=request.data)
+            subject = self.get_subject(subject_id=subject_pk)
+            serializer = SubjectPatchSerializer(subject, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-#@permission_classes([IsOwnerOrReadOnly & IsProfesorOrReadOnly])
-@permission_classes([IsAuthenticated])
-class SubjectsAlumnos(ModelViewSet):
-    def get_alumnos(self, request, pk=None):
+@permission_classes([IsProfesorOfSubjectOrReadOnly])
+class SubjectsStudents(ModelViewSet):
+    def get_students(self, request, subject_pk=None):
         try:
-            subject = Subjects.objects.get(id=pk)
-            serializer = StudentsSerializer(subject.alumnos,many=True)
+            subject = Subject.objects.get(id=subject_pk)
+            serializer = StudentSerializer(subject.students,many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
 
-    def post_alumno(self, request, pk=None):
+    def post_student(self, request, subject_pk=None):
         try:            
-            alumno_id = request.data.get('alumno_pk')  # Suponiendo que envías el ID del alumno en el cuerpo de la solicitud
-            alumno = Students.objects.get(id=alumno_id)
-            subject = Subjects.objects.get(id=pk)
-            subject.alumnos.add(alumno)
+            student_pk = request.data.get('student_pk')  # Suponiendo que envías el ID del alumno en el cuerpo de la solicitud
+            student = Student.objects.get(id=student_pk)
+            subject = Subject.objects.get(id=subject_pk)
+            subject.students.add(student)
             return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
-        except Students.DoesNotExist:
+        except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-    def delete_alumno(self,request, pk=None):
+    def delete_student(self,request, subject_pk=None):
         try:
-            alumno_id = request.data.get('alumno_pk')            
-            alumno = Students.objects.get(id=alumno_id)
-            subject = Subjects.objects.get(id=pk)
-            subject.alumnos.remove(alumno)
-            grupos = GrupoAlumnos.objects.filter(subject_id=subject)
-            for grupo in grupos:
-                grupo.alumnos.remove(alumno)
-            #Horario.objects.filter(alumnos_horario=instance.alumnos.all()).delete()
+            student_pk = request.data.get('student_pk')            
+            student = Student.objects.get(id=student_pk)
+            subject = Subject.objects.get(id=subject_pk)
+            subject.students.remove(student)
+            groups = StudentGroup.objects.filter(subject=subject)
+            for group in groups:
+                if (student in groups.students.all()):
+                    group.students.remove(student)
+                group.students.remove(student)
+            classInstances = ClassInstance.objects.filter(subject=subject, state="proximamente")
+            for classInstance in classInstances:
+                if (student in classInstance.students.all()):
+                    classInstance.students.remove(student)
+           
             return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
-        except Students.DoesNotExist:
+        except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
 @permission_classes([IsAuthenticated])
-class SubjectsAlumnosAuto(ModelViewSet):
+class SubjectsStudentAuto(ModelViewSet):
     def get_student(self,request):        
         try:
-            student = Students.objects.get(admin=request.user)          #Falta poner que si es profesor no pueda usar esta vista  
+            student = Student.objects.get(user=request.user)          #Falta poner que si es profesor no pueda usar esta vista  
             return student
-        except Students.DoesNotExist:
+        except Student.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND    
-    def post_alumno_auto(self, request, pk=None):
+    def post_student_auto(self, request, subject_pk=None):
         try:            
-            alumno = self.get_student(request)  # Suponiendo que envías el ID del alumno en el cuerpo de la solicitud
-            #alumno = Students.objects.get(id=alumno_id)
-            subject = Subjects.objects.get(id=pk)
-            subject.alumnos.add(alumno)
-            return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
-        except Students.DoesNotExist:
+            student = self.get_student(request)              
+            subject = Subject.objects.get(id=subject_pk)
+            subject.students.add(student)
+            return Response({"message": "Estudiante agregado correctamente"}, status=status.HTTP_201_CREATED)
+        except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-    def delete_alumno_auto(self,request, pk=None):
+    def delete_student_auto(self,request, subject_pk=None):
         try:
-            alumno = self.get_student(request)
-            subject = Subjects.objects.get(id=pk)
-            subject.alumnos.remove(alumno)
-            return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
-        except Students.DoesNotExist:
+            student = self.get_student(request)
+            subject = Subject.objects.get(id=subject_pk)
+            subject.students.remove(student)
+            return Response({"message": "Estudiante eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 @permission_classes([IsAuthenticated,IsProfesorOfSubjectOrReadOnly])
-class SubjectsExitProfesor(ModelViewSet):
+class SubjectsExitTeacher(ModelViewSet):
     def get_teacher(self,request):        
         try:
-            teacher = Teachers.objects.get(admin=request.user)            
+            teacher = Teacher.objects.get(user=request.user)            
             return teacher
         except User.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND    
     def get_subject(self, subject_id):
         try:
-            return Subjects.objects.get(id=subject_id)
-        except Subjects.DoesNotExist:
+            return Subject.objects.get(id=subject_id)
+        except Subject.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND
 
-    def exit_profesor_auto(self,request, pk=None):
+    def exit_teacher_auto(self,request, subject_pk=None):
         try:
             teacher = self.get_teacher(request)
-            subject = Subjects.objects.get(id=pk)
-            subject.profesores.remove(teacher)
-            Clase.objects.filter(subject_id=subject,staff_id=teacher,estado='proximamente').update(staff_id=None)
+            subject = Subject.objects.get(id=subject_pk)
+            subject.teachers.remove(teacher)
+            classInstances = ClassInstance.objects.filter(subject=subject,estado='proximamente')
+            for classInstance in classInstances:
+                if (teacher in classInstance.teachers.all()):
+                    classInstance.teachers.remove(teacher)
             return Response({"message": "Teacher eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)       
-        except Subjects.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
