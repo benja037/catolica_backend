@@ -187,9 +187,9 @@ class StudentSubjectRequest(models.Model):
 def create_user_profile(sender,instance,created,**kwargs):
     if created:        
         if instance.user_type=="profesor":
-            Teacher.objects.create(admin=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
+            Teacher.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
         if instance.user_type=="alumno":
-            Student.objects.create(admin=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
+            Student.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
         if instance.user_type=="apoderado":
             pass
 
