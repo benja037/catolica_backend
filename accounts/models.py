@@ -40,7 +40,7 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):   
 
     TIPO_GENDER_CHOICES = [('hombre', 'hombre'),('mujer', 'mujer'),]
-    objects= UserManager()   
+      
     
     REQUIRED_FIELDS = []   #With this 2 lines make email username
     USUARIO_ALUMNO = 'alumno'
@@ -58,6 +58,7 @@ class User(AbstractUser):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     USERNAME_FIELD = "email"
+    objects= UserManager() 
     def __str__(self):
         return self.email
     
