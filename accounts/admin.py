@@ -2,7 +2,7 @@ from django.contrib import admin
 from.models import ClassInstance, StudentGroup, User,Student,Teacher,Discipline,Subject,Attendance
 # Register your models here.
 class UserDisplay(admin.ModelAdmin):
-    list_display = ('id','email','username','firstname','lastname')
+    list_display = ('id','email','firstname','lastname')
 admin.site.register(User,UserDisplay)
 class StudentDisplay(admin.ModelAdmin):
     list_display = ('id','gender','firstname','lastname')
