@@ -6,10 +6,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action,permission_classes,api_view
 
-from accounts.permissions import IsOwnerOrReadOnly,IsProfesorOrReadOnly
-from accounts.serializers import StudentsSerializer
+from accounts.permissions import IsProfesorOrReadOnly
+from accounts.serializers import StudentSerializer
 
-from .models import Attendance, Clase, GrupoAlumnos, Students,Subjects,Courses, Teachers, User
+from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, User
 from rest_framework.permissions import IsAuthenticated
 from openpyxl import Workbook
 
@@ -19,19 +19,19 @@ from django.http import JsonResponse
 from django.core.mail import EmailMessage, get_connection
 
 @api_view(['GET'])
-@permission_classes([IsOwnerOrReadOnly & IsProfesorOrReadOnly])
-def subject_attendance_info(request, pk):
+@permission_classes([IsProfesorOrReadOnly])
+def subject_attendance_info(request, subject_pk):
     try:
         dict_attendance = {}
         
         # Obtener el tema específico
-        subject = get_object_or_404(Subjects, id=pk)
+        subject = get_object_or_404(Subject, id=subject_pk)
         
         # Obtener todas las asistencias relacionadas con las clases del tema
-        attendances = Attendance.objects.filter(clase_id__subject_id=pk,clase_id__estado ='realizada')
+        attendances = Attendance.objects.filter(class_instance__subject=subject_pk,class__state ='realizada')
 
         # Obtener todos los estudiantes del tema
-        students = subject.alumnos.all()
+        students = subject.students.all()
 
         # Crear un nuevo libro de Excel y una hoja de cálculo
         workbook = Workbook()
@@ -40,12 +40,12 @@ def subject_attendance_info(request, pk):
 
         for student in students:
             # Filtrar las asistencias del estudiante en las clases del tema
-            student_attendances = attendances.filter(student_id=student.id)
+            student_attendances = attendances.filter(student=student.id)
 
             # Contar las asistencias verdaderas y falsas del estudiante
-            attendance_true_count = student_attendances.filter(estado=True).count()
-            attendance_false_count = student_attendances.filter(estado=False).count()
-            student_serializer = StudentsSerializer(student)
+            attendance_true_count = student_attendances.filter(state=True).count()
+            attendance_false_count = student_attendances.filter(state=False).count()
+            student_serializer = StudentSerializer(student)
 
             """ dict_attendance[student_serializer.data['id']] = {
                 'firstname': student_serializer.data['firstname'],
@@ -93,7 +93,7 @@ def subject_attendance_info(request, pk):
                 email.send()
         return JsonResponse({"status": "ok"})    
 
-    except Subjects.DoesNotExist:
+    except Subject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
 

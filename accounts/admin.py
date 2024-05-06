@@ -1,28 +1,28 @@
 from django.contrib import admin
-from.models import Clase, GrupoAlumnos, User,Students,Teachers,Courses,Subjects,Attendance
+from.models import ClassInstance, StudentGroup, User,Student,Teacher,Discipline,Subject,Attendance
 # Register your models here.
 class UserDisplay(admin.ModelAdmin):
     list_display = ('id','email','username','firstname','lastname')
 admin.site.register(User,UserDisplay)
-class StudentsDisplay(admin.ModelAdmin):
+class StudentDisplay(admin.ModelAdmin):
     list_display = ('id','gender','firstname','lastname')
-admin.site.register(Students,StudentsDisplay)
-class TeachersDisplay(admin.ModelAdmin):
+admin.site.register(Student,StudentDisplay)
+class TeacherDisplay(admin.ModelAdmin):
     list_display = ('id','gender','firstname','lastname')
-admin.site.register(Teachers,TeachersDisplay)
-class CoursesDisplay(admin.ModelAdmin):
-    list_display = ('course_name','id')
-admin.site.register(Courses,CoursesDisplay)
-""" class SubjectsDisplay(admin.ModelAdmin):
-    list_display = ('id','gender','firstname','lastname') """
-admin.site.register(Subjects)
-""" class StudentsAttendance(admin.ModelAdmin):
-    list_display = ('id','gender','firstname','lastname') """
-admin.site.register(Attendance)
-class GrupoDisplay(admin.ModelAdmin):
+admin.site.register(Teacher,TeacherDisplay)
+class DisciplineDisplay(admin.ModelAdmin):
+    list_display = ('id','discipline_name')
+admin.site.register(Discipline,DisciplineDisplay)
+class SubjectDisplay(admin.ModelAdmin):
+    list_display = ('id','subject_name') 
+admin.site.register(Subject,SubjectDisplay)
+class AttendanceDisplay(admin.ModelAdmin):
+    list_display = ('id','student','class_instance','updated_at') 
+admin.site.register(Attendance,AttendanceDisplay)
+class StudentGroupDisplay(admin.ModelAdmin):
     list_display = ('id','name')
-admin.site.register(GrupoAlumnos,GrupoDisplay)
+admin.site.register(StudentGroup,StudentGroupDisplay)
 
-class ClaseDisplay(admin.ModelAdmin):
-    list_display = ('id')
-admin.site.register(Clase)
+class ClassInstanceDisplay(admin.ModelAdmin):
+    list_display = ('id','date','time_start','time_end','state')
+admin.site.register(ClassInstance,ClassInstanceDisplay)
