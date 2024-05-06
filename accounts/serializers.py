@@ -164,7 +164,7 @@ class AttendanceSerializerOnlyStateChange(serializers.ModelSerializer):
 #===============================================================================
 class SignUpSerializer(serializers.ModelSerializer):    
     email= serializers.CharField(max_length=80)
-    username=serializers.CharField(max_length=45)
+    #username=serializers.CharField(max_length=45)
     password=serializers.CharField(min_length=8,write_only=True)
     firstname=serializers.CharField(max_length=45)
     lastname=serializers.CharField(max_length=45)
@@ -174,7 +174,7 @@ class SignUpSerializer(serializers.ModelSerializer):
  
     class Meta:
         model=User
-        fields= ['email','username','password','firstname','lastname','date_of_birth','user_type','gender']
+        fields= ['email','password','firstname','lastname','date_of_birth','user_type','gender']
 
     def validate(self,attrs):
         email_exists=User.objects.filter(email=attrs['email']).exists()
