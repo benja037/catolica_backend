@@ -44,10 +44,10 @@ class LoginView(APIView):
             tokens = create_jwt_pair_for_user(user)
             user_type = user.user_type
             firstname = user.firstname
-            response = {"message": "Login Successfull", "tokens": tokens,"user_type":user_type,"firstname":firstname}
+            response = {"msg": "Login Successfull", "tokens": tokens,"user_type":user_type,"firstname":firstname}
             return Response(data=response, status = status.HTTP_200_OK)
         else:
-            return Response(data={"message": "Invalid email or password"},status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"msg": "Invalid email or password"},status=status.HTTP_400_BAD_REQUEST)
         
     def get(self, request: Request):
         content = {"user":str(request.user),"auth": str(request.auth)}
