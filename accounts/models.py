@@ -37,7 +37,8 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email,password,**extra_fields)
 
-class User(AbstractUser):   
+class User(AbstractUser):  
+    username = None 
 
     TIPO_GENDER_CHOICES = [('hombre', 'hombre'),('mujer', 'mujer'),]
       
