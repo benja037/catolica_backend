@@ -81,7 +81,7 @@ class Subjects_Retrieve_Delete_Patch(ModelViewSet):
     @action(detail=True, methods=['get'])    
     def retrieve_subject(self, request, subject_pk=None):
         try:
-            subject = self.get_subject(subject=subject_pk)
+            subject = self.get_subject(subject_id=subject_pk)
             serializer = SubjectRetrieveSerializer(subject,context={'request':request})
             return Response(serializer.data)
         except Subject.DoesNotExist:
