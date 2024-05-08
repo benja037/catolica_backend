@@ -6,7 +6,7 @@ from rest_framework.decorators import action,permission_classes
 from accounts.permissions import  IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
 from accounts.serializers import  StudentSerializer, SubjectRetrieveSerializer, SubjectGetSerializer, SubjectPatchSerializer, SubjectPostSerializer
 
-from .models import ClassInstance, Student,Subject,Discipline, Teacher, User,StudentGroup
+from .models import ClassInstance, Student,Subject,Discipline, Teacher, CustomUser,StudentGroup
 from rest_framework.permissions import IsAuthenticated
 
 @permission_classes([IsProfesorOfSubjectOrReadOnly])
@@ -169,7 +169,7 @@ class SubjectsExitTeacher(ModelViewSet):
         try:
             teacher = Teacher.objects.get(user=request.user)            
             return teacher
-        except User.DoesNotExist:
+        except CustomUser.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND    
     def get_subject(self, subject_id):
         try:

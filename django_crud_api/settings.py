@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['.vercel.app','127.0.0.1']
 
@@ -45,13 +45,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
+    'rest_framework',    
     #'tasks',
     'accounts'
 ]
 
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = "accounts.CustomUser"
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False
 REST_FRAMEWORK = {   
     'NON_FIELD_ERRORS_KEY': 'error',

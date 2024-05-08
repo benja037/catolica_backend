@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from accounts.permissions import IsProfesorOrReadOnly
 from accounts.serializers import StudentGroupSerializer, StudentSerializer
 
-from .models import  Student,Subject,Discipline, Teacher, User,StudentGroup
+from .models import  Student,Subject,Discipline, Teacher, CustomUser,StudentGroup
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
