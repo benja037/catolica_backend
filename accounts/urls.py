@@ -4,6 +4,7 @@ from . import views_reports
 from . import views_student_groups
 from . import views_class
 from . import views_attendances
+from . import views_students
 
 from django.urls import path
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView,  TokenVerifyView)
@@ -18,7 +19,12 @@ router.register(r'attendance',views_simple.AttendanceView, 'attendance')
 router.register(r'horario',views_simple.HorarioView, 'horario') """
 
 
-urlpatterns = [  
+urlpatterns = [ 
+    #Students
+    path('students/', views_students.Students_allView.as_view({'get': 'list_students', 'post': 'create_student'}), name='students-list'),
+    path('students/<int:student_pk>/', views_students.Students_allView.as_view({'get': 'retrieve_student', 'put': 'update_student'}), name='student-detail'),
+
+     
     #Disciplines
     path('disciplines/', views_disciplines.Disciplines_allView.as_view({'get': 'list_disciplines', 'post': 'create_discipline'}), name='disciplines-list'),
     path('disciplines/<int:discipline_pk>/', views_disciplines.Disciplines_allView.as_view({'get': 'retrieve_discipline', 'put': 'update_discipline', 'delete': 'delete_discipline'}), name='subject-detail'),
