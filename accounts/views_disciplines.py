@@ -15,12 +15,11 @@ class Disciplines_allView(ModelViewSet):
     serializer_class = DisciplineSerializer       
     queryset = Discipline.objects.all()
     def get_queryset(self):        
-        all_disciplines = Discipline.objects.all()
-        #queryset = Courses.objects.all()
+        all_disciplines = Discipline.objects.all()       
         serializer = self.serializer_class(all_disciplines, many=True)
         return Response(serializer.data)
     
-    def list_disciplines(self,request,course_pk=None):
+    def list_disciplines(self,request):
         try:
             all_disciplines = Discipline.objects.all()
             serializer = DisciplineSerializer(all_disciplines, many=True)
