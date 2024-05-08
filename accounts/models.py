@@ -79,6 +79,7 @@ class Teacher(models.Model):
     ]
     gender=models.CharField(choices = GENDER_CHOICES,max_length=20,null = True)    
     date_of_birth=models.DateField(null=True)
+    phone_number = models.CharField(max_length=45,null=True) 
     firstname = models.CharField(max_length=45)
     lastname = models.CharField(max_length=45)
     verified = models.BooleanField(default=False)
@@ -193,9 +194,9 @@ class StudentSubjectRequest(models.Model):
 def create_user_profile(sender,instance,created,**kwargs):
     if created:        
         if instance.user_type=="profesor":
-            Teacher.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
+            Teacher.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,phone_number=instance.phone_number)
         if instance.user_type=="alumno":
-            Student.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,)
+            Student.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,phone_number=instance.phone_number)
         if instance.user_type=="apoderado":
             pass
 
