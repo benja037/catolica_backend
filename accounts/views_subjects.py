@@ -9,8 +9,8 @@ from accounts.serializers import  StudentSerializer, SubjectRetrieveSerializer, 
 from .models import ClassInstance, Student,Subject,Discipline, Teacher, CustomUser,StudentGroup
 from rest_framework.permissions import IsAuthenticated
 
-@permission_classes([IsProfesorOfSubjectOrReadOnly])
-class Subjects_allView(ModelViewSet):    
+@permission_classes([IsProfesorOrReadOnly])
+class Subjects_Get_Post(ModelViewSet):    
     serializer_class = SubjectRetrieveSerializer       
     queryset = Subject.objects.all()
     def get_queryset(self):
@@ -39,19 +39,9 @@ class Subjects_allView(ModelViewSet):
             serializer = SubjectGetSerializer(subjects_of_discipline, many=True,context={'request':request})
             return Response(serializer.data)
         except Subject.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        
-    @action(detail=True, methods=['get'])    
-    def retrieve_subject(self, request, subject_pk=None):
-        try:
-            subject = self.get_subject(subject=subject_pk)
-            serializer = SubjectRetrieveSerializer(subject,context={'request':request})
-            return Response(serializer.data)
-        except Subject.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_404_NOT_FOUND)        
    
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'])    
     def create_subject(self, request, discipline_pk=None):
         serializer = SubjectPostSerializer(data=request.data)
         if serializer.is_valid():
@@ -65,7 +55,38 @@ class Subjects_allView(ModelViewSet):
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
+@permission_classes([IsProfesorOfSubjectOrReadOnly])    
+class Subjects_Retrieve_Delete_Patch(ModelViewSet):
+    serializer_class = SubjectRetrieveSerializer       
+    queryset = Subject.objects.all()
+    def get_queryset(self):
+        discipline_pk = self.request.query_params.get('discipline_pk') or None
+        if discipline_pk is not None:
+            subjects_of_discipline = Subject.objects.filter(discipline=discipline_pk)         
+            serializer = self.serializer_class(subjects_of_discipline, many=True)
+        return Response(serializer.data)
+    def get_teacher(self,request):        
+        try:
+            teacher = Teacher.objects.get(user=request.user)            
+            return teacher
+        except Teacher.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+    def get_subject(self, subject_id):
+        try:
+            return Subject.objects.get(id=subject_id)
+        except Subject.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+    @action(detail=True, methods=['get'])    
+    def retrieve_subject(self, request, subject_pk=None):
+        try:
+            subject = self.get_subject(subject=subject_pk)
+            serializer = SubjectRetrieveSerializer(subject,context={'request':request})
+            return Response(serializer.data)
+        except Subject.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+   
     @action(detail=True, methods=['delete'])
     def delete_subject(self, request, subject_pk=None):
         try:            
@@ -88,6 +109,7 @@ class Subjects_allView(ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Subject.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 @permission_classes([IsProfesorOfSubjectOrReadOnly])
 class SubjectsStudents(ModelViewSet):
