@@ -10,6 +10,8 @@ class ReadOnly(BasePermission):
     
 class IsProfesorOrReadOnly(BasePermission):
     def has_permission(self, request, view):
+        if request.user.is_superuser or request.user.is_staff:
+            return True
         if request.method in SAFE_METHODS:
             return True
         return request.user.user_type=="profesor"
