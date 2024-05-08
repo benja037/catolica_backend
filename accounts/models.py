@@ -119,7 +119,7 @@ class Student(models.Model):
 class Subject(models.Model):
     id=models.AutoField(primary_key=True)
     subject_name=models.CharField(max_length=50)
-    course=models.ForeignKey('Discipline',on_delete=models.SET_NULL, null=True)
+    discipline=models.ForeignKey('Discipline',on_delete=models.SET_NULL, null=True)
     teachers=models.ManyToManyField(Teacher)    
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
