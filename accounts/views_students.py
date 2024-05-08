@@ -4,41 +4,41 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import IsProfesorOrReadOnly
-from accounts.serializers import DisciplineSerializer
+from accounts.serializers import SimpleStudentSerializer, StudentSerializer
 
-from .models import Student,Discipline, Teacher, CustomUser
+from .models import Student
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
 @permission_classes([IsProfesorOrReadOnly])
-class Disciplines_allView(ModelViewSet):    
-    serializer_class = DisciplineSerializer       
-    queryset = Discipline.objects.all()
+class Students_allView(ModelViewSet):    
+    serializer_class = StudentSerializer       
+    queryset = Student.objects.all()
     def get_queryset(self):        
-        all_disciplines = Discipline.objects.all()       
-        serializer = self.serializer_class(all_disciplines, many=True)
+        all_students = Student.objects.all()       
+        serializer = self.serializer_class(all_students, many=True)
         return Response(serializer.data)
     
-    def list_disciplines(self,request):
+    def list_students(self,request):
         try:
-            all_disciplines = Discipline.objects.all()
-            serializer = DisciplineSerializer(all_disciplines, many=True)
+            all_students = Student.objects.all()
+            serializer = SimpleStudentSerializer(all_students, many=True)
             return Response(serializer.data)
-        except Discipline.DoesNotExist:
+        except Student.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         
     @action(detail=True, methods=['get'])    
-    def retrieve_discipline(self, request,discipline_pk=None):
+    def retrieve_student(self, request,student_pk=None):
         try:
-            discipline = Discipline.objects.get(id=discipline_pk)
-            serializer = DisciplineSerializer(discipline)
+            student = Student.objects.get(id=student_pk)
+            serializer = StudentSerializer(student)
             return Response(serializer.data)
-        except Discipline.DoesNotExist:
+        except Student.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
    
     @action(detail=False, methods=['post'])
-    def create_discipline(self, request):
+    def create_student(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -46,22 +46,22 @@ class Disciplines_allView(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_discipline(self, request,discipline_pk=None):
+    def delete_student(self, request,student_pk=None):
         try:
-            discipline = Discipline.objects.get(id=discipline_pk)
-            discipline.delete()
+            student = Student.objects.get(id=student_pk)
+            student.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except Discipline.DoesNotExist:
+        except Student.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['put'])
-    def update_discipline(self, request,discipline_pk=None):
+    def update_student(self, request,student_pk=None):
         try:
-            discipline = Discipline.objects.get(id=discipline_pk)
-            serializer = DisciplineSerializer(discipline, data=request.data)
+            student = Student.objects.get(id=student_pk)
+            serializer = StudentSerializer(student, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Discipline.DoesNotExist:
+        except Student.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
