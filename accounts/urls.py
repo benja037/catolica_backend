@@ -21,7 +21,7 @@ router.register(r'horario',views_simple.HorarioView, 'horario') """
 urlpatterns = [  
     #Disciplines
     path('disciplines/', views_disciplines.Disciplines_allView.as_view({'get': 'list_disciplines', 'post': 'create_discipline'}), name='disciplines-list'),
-    path('disciplines/<int:discipline_pk>/', views_disciplines.Disciplines_allView.as_view({'get': 'retrieve_courses', 'put': 'update_course', 'delete': 'delete_course'}), name='subject-detail'),
+    path('disciplines/<int:discipline_pk>/', views_disciplines.Disciplines_allView.as_view({'get': 'retrieve_discipline', 'put': 'update_discipline', 'delete': 'delete_discipline'}), name='subject-detail'),
     #Subjects
     path('disciplines/<int:discipline_pk>/subjects/', views_subjects.Subjects_allView.as_view({'get': 'list_subjects', 'post': 'create_subject'}), name='subjects-list'),
     path('subjects/<int:subject_pk>/', views_subjects.Subjects_allView.as_view({'get': 'retrieve_subject', 'patch': 'update_subject', 'delete': 'delete_subject'}), name='subject-detail'),
