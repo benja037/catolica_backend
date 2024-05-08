@@ -41,7 +41,7 @@ class IsProfesorOfSubjectOrReadOnly(BasePermission):
             return True
         else:
             teacher = self.get_teacher(request)
-            subject = self.get_subject(view.kwargs['pk'])
+            subject = self.get_subject(view.kwargs['subject_pk'])
             if teacher in subject.teachers.all():
                 return True            
         return(False)
