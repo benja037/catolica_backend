@@ -1,16 +1,16 @@
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
-
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
+from django.contrib.admin.models import LogEntry as BaseLogEntry
 # Create your models here.
 
-class UserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):
     def create_user(self,email,password,**extra_fields):
         email = self.normalize_email(email)
 
@@ -37,20 +37,23 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email,password,**extra_fields)
 
-class User(AbstractUser):  
+class CustomUser(AbstractUser):  
     username = None 
 
-    TIPO_GENDER_CHOICES = [('hombre', 'hombre'),('mujer', 'mujer'),]
+    GENDER_CHOICES = [
+        ('Hombre', 'Hombre'),
+        ('Mujer', 'Mujer'),
+    ]
       
     
-    REQUIRED_FIELDS = []   #With this 2 lines make email username
+    REQUIRED_FIELDS = ['firstname', 'lastname', 'gender']
     USUARIO_ALUMNO = 'alumno'
     USUARIO_PROFESOR = 'profesor'
     USUARIO_APODERADO = 'apoderado'
     USUARIO_ADMIN = 'admin'
     TIPO_USUARIO_CHOICES = [(USUARIO_ALUMNO, 'alumno'),(USUARIO_PROFESOR, 'profesor'),(USUARIO_APODERADO, 'apoderado'),(USUARIO_ADMIN,'admin')] 
     email = models.EmailField(unique=True)  
-    gender=models.CharField(choices = TIPO_GENDER_CHOICES,max_length=15,null = True)      
+    gender=models.CharField(choices = GENDER_CHOICES,max_length=15,null = True)      
     date_of_birth=models.DateField(null=True)
     firstname = models.CharField(max_length=45,null=True)
     lastname = models.CharField(max_length=45,null=True)
@@ -59,14 +62,14 @@ class User(AbstractUser):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     USERNAME_FIELD = "email"
-    objects= UserManager() 
+    objects= CustomUserManager() 
     def __str__(self):
         return self.email
-    
+  
     
 class Teacher(models.Model):
     id=models.AutoField(primary_key=True)
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    user=models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
@@ -94,7 +97,7 @@ class Discipline(models.Model):
 
 class Student(models.Model):
     id=models.AutoField(primary_key=True)
-    user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True) 
+    user=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True) 
     date_of_birth=models.DateField(null=True)
     firstname = models.CharField(max_length=45,null=True)
     lastname = models.CharField(max_length=45,null=True)
@@ -186,7 +189,7 @@ class StudentSubjectRequest(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
-@receiver(post_save,sender=User)
+@receiver(post_save,sender=CustomUser)
 def create_user_profile(sender,instance,created,**kwargs):
     if created:        
         if instance.user_type=="profesor":

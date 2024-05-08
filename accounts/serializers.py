@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import ClassInstance, Discipline, StudentGroup, Teacher, User,Student,Subject,Attendance
+from .models import ClassInstance, Discipline, StudentGroup, Teacher, CustomUser,Student,Subject,Attendance
 from rest_framework.validators import ValidationError
 from rest_framework import status
 
 #===========================simple serializer========================
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model= User
+        model= CustomUser
         fields=['id','email','gender','date_of_birth','firstname','lastname','phone_number','user_type']
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -173,11 +173,11 @@ class SignUpSerializer(serializers.ModelSerializer):
     gender=serializers.CharField(max_length=20)
  
     class Meta:
-        model=User
+        model=CustomUser
         fields= ['email','password','firstname','lastname','date_of_birth','user_type','gender']
 
     def validate(self,attrs):
-        email_exists=User.objects.filter(email=attrs['email']).exists()
+        email_exists=CustomUser.objects.filter(email=attrs['email']).exists()
             
         if email_exists:
             raise ValidationError("Email has already been used")

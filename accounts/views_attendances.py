@@ -6,7 +6,7 @@ from rest_framework.decorators import action,permission_classes
 from accounts.permissions import IsProfesorOrReadOnly
 from accounts.serializers import AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyStateChange
 
-from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, User
+from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, CustomUser
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/

@@ -9,7 +9,7 @@ from rest_framework.decorators import action,permission_classes,api_view
 from accounts.permissions import IsProfesorOrReadOnly
 from accounts.serializers import StudentSerializer
 
-from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, User
+from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, CustomUser
 from rest_framework.permissions import IsAuthenticated
 from openpyxl import Workbook
 

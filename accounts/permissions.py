@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework import status
-from accounts.models import Subject, Teacher, User
+from accounts.models import Subject, Teacher, CustomUser
 from rest_framework.response import Response
 
 

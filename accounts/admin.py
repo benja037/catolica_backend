@@ -1,9 +1,11 @@
 from django.contrib import admin
-from.models import ClassInstance, StudentGroup, User,Student,Teacher,Discipline,Subject,Attendance
-# Register your models here.
-class UserDisplay(admin.ModelAdmin):
-    list_display = ('id','email','firstname','lastname')
-admin.site.register(User,UserDisplay)
+from .models import ClassInstance, StudentGroup, CustomUser,Student,Teacher,Discipline,Subject,Attendance
+
+from django.contrib import admin
+
+class CustomUserDisplay(admin.ModelAdmin):
+    list_display = ('id', 'email', 'is_staff')
+admin.site.register(CustomUser,CustomUserDisplay)
 class StudentDisplay(admin.ModelAdmin):
     list_display = ('id','gender','firstname','lastname')
 admin.site.register(Student,StudentDisplay)
