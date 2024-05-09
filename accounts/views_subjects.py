@@ -137,7 +137,8 @@ class SubjectsStudents(ModelViewSet):
             student = Student.objects.get(id=student_pk)
             subject = Subject.objects.get(id=subject_pk)
             if subject.num_max_students <= len(subject.students.all()):                
-                return Response({"message": "El subject ya está lleno"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data={
+                "message": "Lleno"}, status=status.HTTP_400_BAD_REQUEST)
             
             subject.students.add(student)
             return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)                
