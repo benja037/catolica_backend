@@ -133,12 +133,14 @@ class SubjectsStudents(ModelViewSet):
 
     def post_student(self, request, subject_pk=None):
         try:            
-            student_pk = request.data.get('student_pk')  # Suponiendo que envías el ID del alumno en el cuerpo de la solicitud
+            student_pk = request.data.get('student_pk')  
             student = Student.objects.get(id=student_pk)
             subject = Subject.objects.get(id=subject_pk)
-            if (subject.num_max_students > len(subject.students.all())):
-                subject.students.add(student)
-                return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
+            if subject.num_max_students <= len(subject.students.all()):                
+                return Response({"message": "El subject ya está lleno"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            subject.students.add(student)
+            return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)                
         except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         except Subject.DoesNotExist:
