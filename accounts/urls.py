@@ -32,6 +32,7 @@ urlpatterns = [
     path('disciplines/<int:discipline_pk>/subjects/', views_subjects.Subjects_Get_Post.as_view({'get': 'list_subjects', 'post': 'create_subject'}), name='subjects-list'),
     path('subjects/<int:subject_pk>/', views_subjects.Subjects_Retrieve_Delete_Patch.as_view({'get': 'retrieve_subject', 'patch': 'update_subject', 'delete': 'delete_subject'}), name='subject-detail'),
     path('subjects/<int:subject_pk>/students/', views_subjects.SubjectsStudents.as_view({'get': 'get_students', 'post': 'post_student', 'delete': 'delete_student'}), name='subject-add-alumno'),
+    path('subjects/<int:subject_pk>/no-students/', views_subjects.SubjectsStudents.as_view({'get': 'get_no_students'}), name='subject-no-student'),
     path('subjects/<int:subject_pk>/students-auto/', views_subjects.SubjectsStudentAuto.as_view({'post': 'post_student_auto', 'delete': 'delete_student_auto'}), name='subject-add-alumno-auto'),
     path('subjects/<int:subject_pk>/teacher-go-off/', views_subjects.SubjectsExitTeacher.as_view({'delete': 'exit_teacher_auto'}), name='teacher-go-off-auto'),
     #Groups    
