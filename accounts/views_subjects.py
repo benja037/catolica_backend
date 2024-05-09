@@ -144,9 +144,8 @@ class SubjectsStudents(ModelViewSet):
         except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-    def delete_student(self,request, subject_pk=None):
-        try:
-            student_pk = request.data.get('student_pk')            
+    def delete_student(self,request, subject_pk=None,student_pk=None):
+        try:                       
             student = Student.objects.get(id=student_pk)
             subject = Subject.objects.get(id=subject_pk)
             subject.students.remove(student)
