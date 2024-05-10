@@ -125,7 +125,7 @@ class Subject(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
     students = models.ManyToManyField(Student)
     num_max_students = models.IntegerField(default=0)
-    public = models.BooleanField(default=False)
+    ispublic = models.BooleanField(default=False)
     finished = models.BooleanField(default=False)
 
 
@@ -150,7 +150,7 @@ class ClassInstance(models.Model):
     students = models.ManyToManyField(Student, related_name='class_students',blank=True)
     teachers=models.ManyToManyField(Teacher)  
     num_max_students = models.IntegerField(default=0)
-    public = models.BooleanField(default=False)
+    ispublic = models.BooleanField(default=False)
     label = models.CharField(max_length=100, blank=True, null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
