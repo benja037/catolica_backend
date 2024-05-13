@@ -3,14 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
-from accounts.permissions import IsProfesorOrReadOnly
+from accounts.permissions import IsProfesorOrReadOnly,IsProfesorOfSubjectOrReadOnly
 from accounts.serializers import AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyStateChange
 
 from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, CustomUser
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
-@permission_classes([IsProfesorOrReadOnly])
+@permission_classes([IsProfesorOfSubjectOrReadOnly])
 class Attendances_allView(ModelViewSet):    
     serializer_class = AttendanceSerializer       
     queryset = Attendance.objects.all()
@@ -82,7 +82,7 @@ class Attendances_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@permission_classes([IsProfesorOrReadOnly])
+@permission_classes([IsProfesorOfSubjectOrReadOnly])
 class AttendanceOfClass(ModelViewSet):        
 
     def create_default(self, request, class_pk=None,):
