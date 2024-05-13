@@ -151,7 +151,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 class AttendanceSerializerNameLastname(serializers.ModelSerializer):
     user_previous_state =serializers.ReadOnlyField()
-    student = SimpleStudentSerializer(source='student', read_only=True)
+    student = SimpleStudentSerializer(read_only=True)
     class Meta:
         model = Attendance
         fields=['id','student','class_instance','state','user_previous_state']
