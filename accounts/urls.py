@@ -50,9 +50,10 @@ urlpatterns = [
     #Class
     path('subjects/<int:subject_pk>/class/<str:date>/', views_class.Subjects_Class_allView.as_view({'get': 'list'}), name='subject-allClass-of-day'),
     path('subjects/<int:subject_pk>/class/', views_class.ClassInstance_allView.as_view({'get': 'list_class', 'post': 'create_class'}), name='clase-list'),
-    path('class/<int:class_pk>/', views_class.ClassInstance_allView.as_view({'get': 'retrieve_class', 'put': 'update_class', 'delete': 'delete_class'}), name='clase-detail'),
-    path('class/<int:class_pk>/students/', views_class.ClassStudents.as_view({'get': 'get_students', 'post': 'post_student'}), name='class-add-alumno'),
-    path('class/<int:class_pk>/students/<int:student_pk>/', views_class.ClassStudents.as_view({'delete': 'delete_student'}), name='class-remove-alumno'),
+    #Use Subject for validate teacher is staff of the subject
+    path('subjects/<int:subject_pk>/class/<int:class_pk>/', views_class.ClassInstance_allView.as_view({'get': 'retrieve_class', 'put': 'update_class', 'delete': 'delete_class'}), name='clase-detail'),
+    path('subjects/<int:subject_pk>/class/<int:class_pk>/students/', views_class.ClassStudents.as_view({'get': 'get_students', 'post': 'post_student'}), name='class-add-alumno'),
+    path('subjects/<int:subject_pk>/class/<int:class_pk>/students/<int:student_pk>/', views_class.ClassStudents.as_view({'delete': 'delete_student'}), name='class-remove-alumno'),
     path('subjects/<int:subject_pk>/class/<int:class_pk>/no-students/', views_class.ClassStudents.as_view({'get': 'get_no_students'}), name='class-no-student'),
     #Attendance
     path('class/<int:class_pk>/attendances/', views_attendances.Attendances_allView.as_view({'get': 'list_attendances', 'post': 'create_attendance'}), name='asistencia-list'),
