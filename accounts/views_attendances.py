@@ -44,7 +44,7 @@ class Attendances_allView(ModelViewSet):
 
         
     @action(detail=True, methods=['get'])    
-    def retrieve_attendance(self, request,attendance_pk=None):
+    def retrieve_attendance(self, request,attendance_pk=None,subject_pk=None):
         try:
             attendance = Attendance.objects.get(id=attendance_pk)             
             serializer = AttendanceSerializer(attendance)
@@ -61,7 +61,7 @@ class Attendances_allView(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_attendance(self, request,attendance_pk=None):
+    def delete_attendance(self, request,attendance_pk=None,subject_pk=None):
         try:
             attendance = self.get_attendance(attendance_id=attendance_pk)
             attendance.delete()
@@ -70,7 +70,7 @@ class Attendances_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['put'])
-    def update_attendance(self, request,attendance_pk=None):
+    def update_attendance(self, request,attendance_pk=None,subject_pk=None):
         try:
             attendance = self.get_attendance(attendance_id=attendance_pk)
             serializer = AttendanceSerializerOnlyStateChange(attendance, data=request.data)
