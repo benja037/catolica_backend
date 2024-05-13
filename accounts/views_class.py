@@ -141,7 +141,7 @@ class ClassStudents(ModelViewSet):
             classinstance = ClassInstance.objects.get(id=class_pk)
             classinstance.students.remove(student)
             #Attendances of classinstance, maybe need a if
-            Attendance.objects.filter(classinstance=classinstance, student=student).delete()       
+            Attendance.objects.filter(class_instance=classinstance, student=student).delete()       
 
             return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
         except Student.DoesNotExist:
