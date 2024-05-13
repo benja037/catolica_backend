@@ -95,64 +95,7 @@ class Subjects_Class_allView(ModelViewSet):
         except ClassInstance.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-@permission_classes([IsProfesorOfSubjectOrReadOnly])
-class SubjectsStudents(ModelViewSet):
-    def get_students(self, request, subject_pk=None):
-        try:
-            subject = Subject.objects.get(id=subject_pk)
-            serializer = StudentSerializer(subject.students,many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Subject.DoesNotExist:
-            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    def get_no_students(self, request, subject_pk=None,class_pk=None):
-        try:
-            subject = Subject.objects.get(id=subject_pk)
-            classInstance = ClassInstance.objects.get(id=class_pk)
-            students_of_subject = subject.students.all()
-            class_students = classInstance.students.all()
-            students_of_subject_not_in_class = [student for student in students_of_subject if student not in class_students]
-            serializer = StudentSerializer(students_of_subject_not_in_class,many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Subject.DoesNotExist:
-            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        
 
-    def post_student(self, request, subject_pk=None):
-        try:            
-            student_pk = request.data.get('student_pk')  
-            student = Student.objects.get(id=student_pk)
-            subject = Subject.objects.get(id=subject_pk)
-            if subject.num_max_students <= len(subject.students.all()):                
-                return Response(data={
-                "message": "Lleno"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            subject.students.add(student)
-            return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)                
-        except Student.DoesNotExist:
-            return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Subject.DoesNotExist:
-            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        
-    def delete_student(self,request, subject_pk=None,student_pk=None):
-        try:                       
-            student = Student.objects.get(id=student_pk)
-            subject = Subject.objects.get(id=subject_pk)
-            subject.students.remove(student)
-            groups = StudentGroup.objects.filter(subject=subject)
-            for group in groups:
-                if (student in groups.students.all()):
-                    group.students.remove(student)
-                group.students.remove(student)
-            classInstances = ClassInstance.objects.filter(subject=subject, state="proximamente")
-            for classInstance in classInstances:
-                if (student in classInstance.students.all()):
-                    classInstance.students.remove(student)
-           
-            return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
-        except Student.DoesNotExist:
-            return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Subject.DoesNotExist:
-            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)@permission_classes([IsProfesorOfSubjectOrReadOnly])
 
 @permission_classes([IsProfesorOfSubjectOrReadOnly])
 class ClassStudents(ModelViewSet):
