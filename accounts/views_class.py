@@ -154,6 +154,7 @@ class SubjectsStudents(ModelViewSet):
         except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)@permission_classes([IsProfesorOfSubjectOrReadOnly])
 
+@permission_classes([IsProfesorOfSubjectOrReadOnly])
 class ClassStudents(ModelViewSet):
     def get_students(self, request, class_pk=None):
         try:
