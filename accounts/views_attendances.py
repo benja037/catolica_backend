@@ -34,7 +34,7 @@ class Attendances_allView(ModelViewSet):
         except Attendance.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND
     
-    def list_attendances(self,request,class_pk=None,attendance_pk=None):
+    def list_attendances(self,request,class_pk=None,attendance_pk=None,subject_pk=None):
         try:            
             attendances = Attendance.objects.filter(class_instance=class_pk) 
             serializer = AttendanceSerializerNameLastname(attendances, many=True)
@@ -53,7 +53,7 @@ class Attendances_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
    
     @action(detail=False, methods=['post'])
-    def create_attendance(self, request,class_pk=None):
+    def create_attendance(self, request,class_pk=None,subject_pk=None):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(class_instance=ClassInstance.objects.get(id=class_pk))
