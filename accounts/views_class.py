@@ -44,7 +44,7 @@ class ClassInstance_allView(ModelViewSet):
 
         
     @action(detail=True, methods=['get'])    
-    def retrieve_class(self, request,class_pk=None):
+    def retrieve_class(self, request,class_pk=None,subject_pk=None):
         try:
             classInstance = self.get_class(class_id=class_pk)
             serializer = ClassInstanceSerializer(classInstance)
@@ -61,7 +61,7 @@ class ClassInstance_allView(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_class(self, request,class_pk=None):
+    def delete_class(self, request,class_pk=None,subject_pk=None):
         try:
             classInstance = self.get_class(class_id=class_pk)
             classInstance.delete()
@@ -70,7 +70,7 @@ class ClassInstance_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['put'])
-    def update_class(self, request,class_pk=None):
+    def update_class(self, request,class_pk=None,subject_pk=None):
         try:
             classInstance = self.get_class(class_id=class_pk)
             serializer = ClassInstanceSerializer(classInstance, data=request.data)
@@ -98,7 +98,7 @@ class Subjects_Class_allView(ModelViewSet):
 
 @permission_classes([IsProfesorOfSubjectOrReadOnly])
 class ClassStudents(ModelViewSet):
-    def get_students(self, request, class_pk=None):
+    def get_students(self, request, class_pk=None,subject_pk=None):
         try:
             classinstance = ClassInstance.objects.get(id=class_pk)
             serializer = StudentSerializer(classinstance.students,many=True)
@@ -118,7 +118,7 @@ class ClassStudents(ModelViewSet):
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
 
-    def post_student(self, request, class_pk=None):
+    def post_student(self, request, class_pk=None,subject_pk=None):
         try:            
             student_pk = request.data.get('student_pk')  
             student = Student.objects.get(id=student_pk)
@@ -135,7 +135,7 @@ class ClassStudents(ModelViewSet):
         except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-    def delete_student(self,request, class_pk=None,student_pk=None):
+    def delete_student(self,request, class_pk=None,student_pk=None,subject_pk=None):
         try:                       
             student = Student.objects.get(id=student_pk)
             classinstance = ClassInstance.objects.get(id=class_pk)
