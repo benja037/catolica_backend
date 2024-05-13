@@ -104,12 +104,14 @@ class SubjectsStudents(ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    def get_no_students(self, request, subject_pk=None):
+    def get_no_students(self, request, subject_pk=None,class_pk=None):
         try:
             subject = Subject.objects.get(id=subject_pk)
+            classInstance = ClassInstance.objects.get(id=class_pk)
             students_of_subject = subject.students.all()
-            students_out_subject = Student.objects.exclude(id__in=[s.id for s in students_of_subject])
-            serializer = StudentSerializer(students_out_subject,many=True)
+            class_students = classInstance.students.all()
+            students_of_subject_not_in_class = [student for student in students_of_subject if student not in class_students]
+            serializer = StudentSerializer(students_of_subject_not_in_class,many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
