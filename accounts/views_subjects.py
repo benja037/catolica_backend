@@ -6,7 +6,7 @@ from rest_framework.decorators import action,permission_classes
 from accounts.permissions import  IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
 from accounts.serializers import  StudentSerializer, SubjectRetrieveSerializer, SubjectGetSerializer, SubjectPatchSerializer, SubjectPostSerializer
 
-from .models import ClassInstance, Student,Subject,Discipline, Teacher, CustomUser,StudentGroup
+from .models import Attendance, ClassInstance, Student,Subject,Discipline, Teacher, CustomUser,StudentGroup
 from rest_framework.permissions import IsAuthenticated
 
 @permission_classes([IsProfesorOrReadOnly])
@@ -161,6 +161,8 @@ class SubjectsStudents(ModelViewSet):
             for classInstance in classInstances:
                 if (student in classInstance.students.all()):
                     classInstance.students.remove(student)
+                    attendance_of_class = Attendance.objects.filter(student=student,class_instance=classInstance)
+                    attendance_of_class.delete()
            
             return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
         except Student.DoesNotExist:
