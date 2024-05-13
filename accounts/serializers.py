@@ -131,9 +131,10 @@ class SubjectGetSerializer(serializers.ModelSerializer):
 #----------ClassInstance Serializer-------------------
 class ClassInstanceSerializer(serializers.ModelSerializer):
     teachers = SpecialTeacherSerializer(many=True, read_only=True)  
+    students = SimpleStudentSerializer(many=True, read_only=True)
     class Meta:
         model = ClassInstance
-        fields=['id','subject','date','time_start','time_end','state','teachers','num_max_students','ispublic','label']
+        fields=['id','subject','date','time_start','time_end','state','teachers','num_max_students','ispublic','label','students']
 
 class StudentGroupSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True, read_only=True)
