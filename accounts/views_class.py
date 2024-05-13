@@ -128,7 +128,7 @@ class ClassStudents(ModelViewSet):
                 "message": "Lleno"}, status=status.HTTP_400_BAD_REQUEST)
             
             classinstance.students.add(student)
-            Attendance.objects.create(classinstance=classinstance, student=student, state=False)
+            Attendance.objects.create(class_instance=classinstance, student=student, state=False)
             return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)                
         except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
