@@ -96,7 +96,6 @@ class Subjects_Class_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
 
-
 @permission_classes([IsProfesorOfSubjectOrReadOnly])
 class ClassStudents(ModelViewSet):
     def get_students(self, request, class_pk=None):
