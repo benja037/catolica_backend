@@ -55,7 +55,7 @@ urlpatterns = [
     path('class/<int:class_pk>/students/<int:student_pk>/', views_class.ClassStudents.as_view({'delete': 'delete_student'}), name='class-remove-alumno'),
     path('subjects/<int:subject_pk>/class/<int:class_pk>/no-students/', views_class.ClassStudents.as_view({'get': 'get_no_students'}), name='class-no-student'),
     #Attendance
-    path('class/<int:class_pk>/attendances/', views_attendances.Attendances_allView.as_view({'get': 'list_attendances', 'post': 'create_attendancecreate_attendance'}), name='asistencia-list'),
+    path('class/<int:class_pk>/attendances/', views_attendances.Attendances_allView.as_view({'get': 'list_attendances', 'post': 'create_attendance'}), name='asistencia-list'),
     path('attendances/<int:attendance_pk>/', views_attendances.Attendances_allView.as_view({'get': 'retrieve_attendance', 'put': 'update_attendance', 'delete': 'delete_attendance'}), name='asistencia-detail'),
     #Hacer URL que devuelva la cantidad de asistencias e inasistencias de un alumno
     #path('asistencias/<int:alumno_pk>/'),
