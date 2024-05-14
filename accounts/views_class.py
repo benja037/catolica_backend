@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import IsProfesorOfSubjectOrReadOnly, IsProfesorOrReadOnly
-from accounts.serializers import ClassInstanceSerializer, StudentSerializer
+from accounts.serializers import ClassInstancePutSerializer, ClassInstanceSerializer, StudentSerializer
 
 from .models import Attendance, Discipline, StudentGroup, Student,Subject,ClassInstance, Teacher, CustomUser
 from rest_framework.permissions import IsAuthenticated
@@ -69,11 +69,11 @@ class ClassInstance_allView(ModelViewSet):
         except ClassInstance.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-    @action(detail=True, methods=['put'])
-    def update_class(self, request,class_pk=None,subject_pk=None):
+    @action(detail=True, methods=['patch'])
+    def patch_class(self, request,class_pk=None,subject_pk=None):
         try:
             classInstance = self.get_class(class_id=class_pk)
-            serializer = ClassInstanceSerializer(classInstance, data=request.data)
+            serializer = ClassInstancePutSerializer(classInstance, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
