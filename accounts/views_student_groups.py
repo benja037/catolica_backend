@@ -5,7 +5,7 @@ from rest_framework.decorators import action,permission_classes
 from rest_framework.views import APIView
 
 from accounts.permissions import IsProfesorOrReadOnly
-from accounts.serializers import StudentGroupSerializer, StudentSerializer
+from accounts.serializers import StudentGroupPostSerializer, StudentGroupSerializer, StudentSerializer
 
 from .models import  Student,Subject,Discipline, Teacher, CustomUser,StudentGroup
 from rest_framework.permissions import IsAuthenticated
@@ -55,7 +55,7 @@ class StudentGroups_allView(ModelViewSet):
    
     @action(detail=False, methods=['post'])
     def create_group(self, request, subject_pk=None):
-        serializer = self.serializer_class(data=request.data)
+        serializer = StudentGroupPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(subject=Subject.objects.get(id=subject_pk))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
