@@ -54,9 +54,12 @@ class ClassInstance_allView(ModelViewSet):
    
     @action(detail=False, methods=['post'])
     def create_class(self, request,subject_pk=None):
+        group_id = request.data.get('group_id', None)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save(subject=Subject.objects.get(id=subject_pk))
+            class_instance =serializer.save(subject=Subject.objects.get(id=subject_pk))
+            if group_id != None and group_id != "":
+                class_instance.add_students_group(group_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
