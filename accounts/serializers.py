@@ -43,7 +43,7 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True, read_only=True)  
     class Meta:
         model = Subject
-        fields=['id','subject_name','teachers','students','discipline','num_max_students','ispublic','finished']
+        fields=['id','subject_name','teachers','students','discipline','num_max_students','mode','finished']
     def get_student(self,request):        
         try:
             student = Student.objects.get(user=request.user)            
@@ -82,20 +82,20 @@ class SubjectPostSerializer(serializers.ModelSerializer):
     teachers = SpecialTeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subject
-        fields=['id','subject_name','teachers','discipline','num_max_students','ispublic','finished']
+        fields=['id','subject_name','teachers','discipline','num_max_students','mode','finished']
 
 #subjects/<int:pk>/
 class SubjectPatchSerializer(serializers.ModelSerializer):       
     class Meta:
         model = Subject
-        fields=['id','subject_name','num_max_students','ispublic','finished']    
+        fields=['id','subject_name','num_max_students','mode','finished']    
 
 #courses/<int:course_pk>/subjects/
 class SubjectGetSerializer(serializers.ModelSerializer):  
     teachers = SpecialTeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subject
-        fields=['id','subject_name','teachers','discipline','num_max_students','ispublic','finished']
+        fields=['id','subject_name','teachers','discipline','num_max_students','mode','finished']
     def get_student(self,request):        
         try:
             student = Student.objects.get(user=request.user)            
@@ -134,12 +134,12 @@ class ClassInstanceSerializer(serializers.ModelSerializer):
     students = SimpleStudentSerializer(many=True, read_only=True)
     class Meta:
         model = ClassInstance
-        fields=['id','subject','date','time_start','time_end','state','teachers','num_max_students','ispublic','label','students']
+        fields=['id','subject','date','time_start','time_end','state','teachers','num_max_students','mode','label','students']
 
 class ClassInstancePutSerializer(serializers.ModelSerializer):    
     class Meta:
         model = ClassInstance
-        fields=['id','subject','date','time_start','time_end','state','num_max_students','ispublic','label']
+        fields=['id','subject','date','time_start','time_end','state','num_max_students','mode','label']
 
 class StudentGroupSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True, read_only=True)
