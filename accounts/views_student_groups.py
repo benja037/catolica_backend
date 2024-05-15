@@ -45,7 +45,7 @@ class StudentGroups_allView(ModelViewSet):
 
         
     @action(detail=True, methods=['get'])    
-    def retrieve_group(self, request,group_pk=None):
+    def retrieve_group(self, request,group_pk=None,subject_pk=None):
         try:
             group = self.get_grupo(group_id=group_pk)
             serializer = StudentGroupSerializer(group,context={'request':request})
@@ -62,7 +62,7 @@ class StudentGroups_allView(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['delete'])
-    def delete_group(self, request,group_pk=None):
+    def delete_group(self, request,group_pk=None,subject_pk=None):
         try:
             group = self.get_group(group_id=group_pk)
             group.delete()
@@ -71,7 +71,7 @@ class StudentGroups_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=True, methods=['put'])
-    def update_group(self, request,group_pk=None):
+    def update_group(self, request,group_pk=None,subject_pk=None):
         try:
             group = self.get_group(group_id=group_pk)
             serializer = StudentGroupSerializer(group, data=request.data)
@@ -84,7 +84,7 @@ class StudentGroups_allView(ModelViewSet):
         
 @permission_classes([IsProfesorOfSubjectOrReadOnly])
 class ManageStudentOfGroup(ModelViewSet):
-    def get_students_of_group(self, request, group_pk=None):
+    def get_students_of_group(self, request, group_pk=None,subject_pk=None):
         try:
             group = StudentGroup.objects.get(id=group_pk)
             serializer = StudentGroupSerializer(group.students,many=True)
@@ -93,7 +93,7 @@ class ManageStudentOfGroup(ModelViewSet):
             return Response({"message": "Grupo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
 
-    def post_student_to_group(self, request, group_pk=None):
+    def post_student_to_group(self, request, group_pk=None,subject_pk=None):
         try:            
             student_id = request.data.get('student_pk')  
             student = Student.objects.get(id=student_id)
@@ -105,7 +105,7 @@ class ManageStudentOfGroup(ModelViewSet):
         except StudentGroup.DoesNotExist:
             return Response({"message": "Grupo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-    def delete_student_of_group(self,request, group_pk=None):
+    def delete_student_of_group(self,request, group_pk=None,subject_pk=None):
         try:
             student_id = request.data.get('student_pk')            
             student = Student.objects.get(id=student_id)
