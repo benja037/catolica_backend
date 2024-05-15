@@ -82,7 +82,7 @@ class Attendances_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@permission_classes([IsProfesorOfSubjectOrReadOnly])
+""" @permission_classes([IsProfesorOfSubjectOrReadOnly])
 class AttendanceOfClass(ModelViewSet):        
 
     def create_default(self, request, class_pk=None,):
@@ -94,6 +94,6 @@ class AttendanceOfClass(ModelViewSet):
                 Attendance.objects.create(class_instance=class_instance,student = Student.objects.get(id=student_id),state=False,user_previous_state="no-responde")
             return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
         except ClassInstance.DoesNotExist:
-            return Response({"message": "Clase no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Clase no encontrada"}, status=status.HTTP_404_NOT_FOUND) """
         
     

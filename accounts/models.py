@@ -125,7 +125,8 @@ class Subject(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
     students = models.ManyToManyField(Student)
     num_max_students = models.IntegerField(default=0)
-    ispublic = models.BooleanField(default=False)
+    MODE_CHOICES = [('publico', 'publico'),('privado', 'privado'),('moderado','moderado')]
+    mode = models.CharField(choices = MODE_CHOICES,max_length=50,default='moderado')
     finished = models.BooleanField(default=False)
 
 
@@ -150,7 +151,8 @@ class ClassInstance(models.Model):
     students = models.ManyToManyField(Student, related_name='class_students',blank=True)
     teachers=models.ManyToManyField(Teacher)  
     num_max_students = models.IntegerField(default=0)
-    ispublic = models.BooleanField(default=False)
+    MODE_CHOICES = [('publico', 'publico'),('privado', 'privado'),('moderado','moderado')]
+    mode = models.CharField(choices = MODE_CHOICES,max_length=50,default='moderado')
     label = models.CharField(max_length=100, blank=True, null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)

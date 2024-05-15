@@ -60,7 +60,7 @@ urlpatterns = [
     path('subjects/<int:subject_pk>/attendances/<int:attendance_pk>/', views_attendances.Attendances_allView.as_view({'get': 'retrieve_attendance', 'put': 'update_attendance', 'delete': 'delete_attendance'}), name='asistencia-detail'),
     #Hacer URL que devuelva la cantidad de asistencias e inasistencias de un alumno
     #path('asistencias/<int:alumno_pk>/'),
-    path('class/<int:class_pk>/attendances/create-default/', views_attendances.AttendanceOfClass.as_view({'post': 'create_default'}), name='asistencia-create-default'),
+    #path('class/<int:class_pk>/attendances/create-default/', views_attendances.AttendanceOfClass.as_view({'post': 'create_default'}), name='asistencia-create-default'),
     #El de arriba esta bien crea todas las asistencias de los alumnos del horario pero el horario lo consigue la funcion
     #path('courses/<int:course_pk>/subjectss2/', views_subjects_2.Subjects_allView.as_view({'get': 'list'}), name='subjects-list2'),
     #path('all-subjects/', SubjectsView.as_view({'get': 'all_subjects'}), name='all-subjects'),
