@@ -146,6 +146,10 @@ class StudentGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentGroup
         fields=['id','subject','name','students']
+class StudentGroupPostSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = StudentGroup
+        fields=['id','name']
 
 
 class AttendanceSerializer(serializers.ModelSerializer):    
