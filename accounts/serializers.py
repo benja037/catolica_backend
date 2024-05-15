@@ -29,7 +29,7 @@ class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     class Meta:
         model= Student
-        fields=['id','user','gender','date_of_birth','firstname','lastname']
+        fields=['id','user','gender','date_of_birth','firstname','lastname','phone_number','document_type','document_number']
 
 class SimpleStudentSerializer(serializers.ModelSerializer):    
     class Meta:

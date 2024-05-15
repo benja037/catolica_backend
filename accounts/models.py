@@ -114,8 +114,8 @@ class Student(models.Model):
     phone_number = models.CharField(max_length=45,null=True)   
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    document_type = models.CharField(max_length=50, null=True)  
-    document_number = models.CharField(choices=DOCUMENT_CHOICES,max_length=50,unique=True)  
+    document_type = models.CharField(choices=DOCUMENT_CHOICES,max_length=50, null=True)  
+    document_number = models.CharField(max_length=50,unique=True)  
     def __str__(self):
         return self.firstname + self.lastname
  
