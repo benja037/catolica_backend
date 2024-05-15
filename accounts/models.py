@@ -162,6 +162,8 @@ class ClassInstance(models.Model):
         for student in group.students.all():
             if student not in self.students.all():
                 self.students.add(student)
+                Attendance.objects.create(student=student, class_instance=self)
+        
 
 class Attendance(models.Model):
     id=models.AutoField(primary_key=True)
