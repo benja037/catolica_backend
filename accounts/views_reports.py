@@ -22,42 +22,44 @@ from django.core.mail import EmailMessage, get_connection
 @permission_classes([IsProfesorOrReadOnly])
 def subject_attendance_info_mail(request, subject_pk):
     try:
-        dict_attendance = {}
-        
         # Obtener el tema específico
         subject = get_object_or_404(Subject, id=subject_pk)
         
-        # Obtener todas las asistencias relacionadas con las clases del tema
-        attendances = Attendance.objects.filter(class_instance__subject=subject_pk,class__state ='realizada')
+        # Obtener todas las clases realizadas del tema
+        classes = ClassInstance.objects.filter(subject=subject, state='realizada')
 
         # Obtener todos los estudiantes del tema
-        students = subject.students.all()
+        students = list(subject.students.all())
 
         # Crear un nuevo libro de Excel y una hoja de cálculo
         workbook = Workbook()
         sheet = workbook.active
         sheet.title = "Asistencias"
 
-        for student in students:
-            # Filtrar las asistencias del estudiante en las clases del tema
-            student_attendances = attendances.filter(student=student.id)
+        # Escribir encabezados de columna
+        headers = ["Clase", "Hora de inicio"] + [f"{student.firstname} {student.lastname}" for student in students]
+        sheet.append(headers)
 
-            # Contar las asistencias verdaderas y falsas del estudiante
-            attendance_true_count = student_attendances.filter(state=True).count()
-            attendance_false_count = student_attendances.filter(state=False).count()
-            student_serializer = StudentSerializer(student)
+        # Iterar sobre las clases y escribir los datos en el libro de Excel
+        for class_instance in classes:
+            row_data = [class_instance.date.strftime("%d-%m-%Y"), class_instance.time_start.strftime("%H:%M")]
 
-            """ dict_attendance[student_serializer.data['id']] = {
-                'firstname': student_serializer.data['firstname'],
-                'lastname': student_serializer.data['lastname'],
-                'True': attendance_true_count,
-                'False': attendance_false_count
-            } """
-            # Obtener el nombre y apellido del estudiante
-            student_name = f"{student.firstname} {student.lastname}"
 
-            # Agregar datos del estudiante a la hoja de cálculo
-            sheet.append([student_name, attendance_true_count, attendance_false_count])
+            # Obtener las asistencias de los estudiantes para esta clase
+            student_attendances = class_instance.attendance_set.filter(student__in=students)
+
+            # Inicializar el estado del estudiante como "No registrado"
+            student_status = ["No registrado"] * len(students)
+
+            # Actualizar el estado del estudiante según las asistencias
+            for sa in student_attendances:
+                index = students.index(sa.student)
+                student_status[index] = "Asistió" if sa.state else "Ausente"
+
+            # Agregar el estado del estudiante a la fila de datos
+            row_data.extend(student_status)
+            sheet.append(row_data)
+
 
         # Crear la respuesta HTTP con el archivo Excel adjunto
         """ response = HttpResponse(content_type='application/ms-excel')
@@ -106,7 +108,7 @@ def subject_attendance_info(request, subject_pk):
         subject = get_object_or_404(Subject, id=subject_pk)
         
         # Obtener todas las asistencias relacionadas con las clases del tema
-        attendances = Attendance.objects.filter(class_instance__subject=subject_pk,class__state ='realizada')
+        attendances = Attendance.objects.filter(class_instance__subject=subject_pk,class_instance__state ='realizada')
 
         # Obtener todos los estudiantes del tema
         students = subject.students.all()       
