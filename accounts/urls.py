@@ -68,6 +68,7 @@ urlpatterns = [
     #path('courses/<int:course_pk>/subjectss2/', views_subjects_2.Subjects_allView.as_view({'get': 'list'}), name='subjects-list2'),
     #path('all-subjects/', SubjectsView.as_view({'get': 'all_subjects'}), name='all-subjects'),
     #Report
-    path('info/subjects/<int:subject_pk>/',views_reports.subject_attendance_info, name='subject-attendance-info'),
+    path('subjects/<int:subject_pk>/info-mail/',views_reports.subject_attendance_info_mail, name='subject-attendance-info-mail'),
+    path('subjects/<int:subject_pk>/info/',views_reports.subject_attendance_info, name='subject-attendance-info'),
    
 ]
