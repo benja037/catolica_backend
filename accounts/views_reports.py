@@ -9,11 +9,12 @@ from rest_framework.decorators import action,permission_classes,api_view
 from accounts.permissions import IsProfesorOrReadOnly
 from accounts.serializers import StudentSerializer
 
-from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, CustomUser
+from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, CustomUser, TempFile
 from rest_framework.permissions import IsAuthenticated
 from openpyxl import Workbook
 
 import os
+import io
 from django.conf import settings
 from django.http import JsonResponse
 from django.core.mail import EmailMessage, get_connection
@@ -26,7 +27,7 @@ def subject_attendance_info_mail(request, subject_pk):
         subject = get_object_or_404(Subject, id=subject_pk)
         
         # Obtener todas las clases realizadas del tema
-        classes = ClassInstance.objects.filter(subject=subject, state='realizada')
+        classes = ClassInstance.objects.filter(subject=subject, state='realizada').order_by('date', 'time_start')
 
         # Obtener todos los estudiantes del tema
         students = list(subject.students.all())
@@ -67,12 +68,20 @@ def subject_attendance_info_mail(request, subject_pk):
         # Obtener la marca de tiempo actual en milisegundos
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
 
-        # Generar un nombre de archivo único con la marca de tiempo
-        file_name = f"asistencias_{timestamp}.xlsx"
-        file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+        
 
-        # Guardar el archivo temporalmente en el servidor
-        workbook.save(file_path)
+        # Generar un nombre de archivo único con la marca de tiempo
+        
+        #file_name = f"asistencias_{timestamp}.xlsx"
+        
+        # Guardar los datos del libro de Excel en un objeto binario
+        excel_buffer = io.BytesIO()
+        workbook.save(excel_buffer)
+        excel_data = excel_buffer.getvalue()
+        # Guardar los datos del archivo en el modelo TempFile
+        temp_file = TempFile.objects.create(file_data=excel_data)
+        
+        
         subject = "Hello from Django SMTP"
         recipient_list = ["infoasistencias.ca@gmail.com",]
         from_email = "onboarding@resend.dev"
@@ -91,8 +100,9 @@ def subject_attendance_info_mail(request, subject_pk):
                     to=recipient_list,
                     from_email=from_email,                    
                     connection=connection)
-                email.attach_file(file_path)
+                email.attach("asistencias.xlsx", temp_file.file_data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 email.send()
+        temp_file.delete()
         return JsonResponse({"status": "ok"})    
 
     except Subject.DoesNotExist:
