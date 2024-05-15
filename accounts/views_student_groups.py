@@ -96,7 +96,7 @@ class ManageStudentOfGroup(ModelViewSet):
         try:
             subject = Subject.objects.get(id=subject_pk)
             grupo = StudentGroup.objects.get(id=group_pk)
-            students_of_group = StudentGroup.students.all()
+            students_of_group = grupo.students.all()
             students_of_subject = subject.students.all()
             students_out_group = [student for student in students_of_subject if student not in students_of_group]
             serializer = StudentSerializer(students_out_group,many=True)
