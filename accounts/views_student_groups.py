@@ -90,7 +90,19 @@ class ManageStudentOfGroup(ModelViewSet):
             serializer = StudentGroupSerializer(group.students,many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except StudentGroup.DoesNotExist:
-            return Response({"message": "Grupo no encontrado"}, status=status.HTTP_404_NOT_FOUND)        
+            return Response({"message": "Grupo no encontrado"}, status=status.HTTP_404_NOT_FOUND)  
+        
+    def get_no_students_of_group(self, request, subject_pk=None,group_pk=None):
+        try:
+            subject = Subject.objects.get(id=subject_pk)
+            grupo = StudentGroup.objects.get(id=group_pk)
+            students_of_group = StudentGroup.students.all()
+            students_of_subject = subject.students.all()
+            students_out_group = [student for student in students_of_subject if student not in students_of_group]
+            serializer = StudentSerializer(students_out_group,many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Subject.DoesNotExist:
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND) 
 
     def post_student_to_group(self, request, group_pk=None,subject_pk=None):
         try:            
