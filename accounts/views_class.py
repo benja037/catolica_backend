@@ -149,4 +149,53 @@ class ClassStudents(ModelViewSet):
             return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
         except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        
+
+@permission_classes([IsAuthenticated,IsProfesorOfSubjectOrReadOnly])
+class SubjectsExitTeacher(ModelViewSet):
+    def get_teacher(self,request):        
+        try:
+            teacher = Teacher.objects.get(user=request.user)            
+            return teacher
+        except CustomUser.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+    def get_subject(self, subject_id):
+        try:
+            return Subject.objects.get(id=subject_id)
+        except Subject.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+
+    def exit_teacher_auto(self,request, subject_pk=None):
+        try:
+            teacher = self.get_teacher(request)
+            subject = Subject.objects.get(id=subject_pk)
+            subject.teachers.remove(teacher)
+            classInstances = ClassInstance.objects.filter(subject=subject,estado='proximamente')
+            for classInstance in classInstances:
+                if (teacher in classInstance.teachers.all()):
+                    classInstance.teachers.remove(teacher)
+            return Response({"message": "Teacher eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)       
+        except Subject.DoesNotExist:
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)@permission_classes([IsAuthenticated,IsProfesorOfSubjectOrReadOnly])
+
+@permission_classes([IsAuthenticated,IsProfesorOfSubjectOrReadOnly])
+class ClassExitTeacher(ModelViewSet):
+    def get_teacher(self,request):        
+        try:
+            teacher = Teacher.objects.get(user=request.user)            
+            return teacher
+        except CustomUser.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+    def get_subject(self, subject_id):
+        try:
+            return Subject.objects.get(id=subject_id)
+        except Subject.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+
+    def exit_teacher_auto(self,request, subject_pk=None):
+        try:
+            teacher = self.get_teacher(request)
+            classInstance = Subject.objects.get(id=subject_pk)
+            classInstance.teachers.remove(teacher)            
+            return Response({"message": "Teacher eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)       
+        except Subject.DoesNotExist:
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)

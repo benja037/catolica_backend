@@ -51,6 +51,8 @@ urlpatterns = [
     #Class
     path('subjects/<int:subject_pk>/class-date/<str:date>/', views_class.Subjects_Class_allView.as_view({'get': 'list'}), name='subject-allClass-of-day'),
     path('subjects/<int:subject_pk>/class/', views_class.ClassInstance_allView.as_view({'get': 'list_class', 'post': 'create_class'}), name='clase-list'),
+    path('subjects/<int:subject_pk>/class/<int:class_pk>/teacher-go-off/', views_class.ClassExitTeacher.as_view({'delete': 'exit_teacher_auto'}), name='teacher-go-off-auto'),
+
     #Use Subject for validate teacher is staff of the subject
     path('subjects/<int:subject_pk>/class/<int:class_pk>/', views_class.ClassInstance_allView.as_view({'get': 'retrieve_class', 'patch': 'patch_class', 'delete': 'delete_class'}), name='clase-detail'),
     path('subjects/<int:subject_pk>/class/<int:class_pk>/students/', views_class.ClassStudents.as_view({'get': 'get_students', 'post': 'post_student'}), name='class-add-alumno'),
