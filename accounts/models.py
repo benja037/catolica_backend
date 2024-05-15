@@ -106,12 +106,16 @@ class Student(models.Model):
         ('Hombre', 'Hombre'),
         ('Mujer', 'Mujer'),
     ]
+    DOCUMENT_CHOICES = [
+        ('rut', 'rut'),
+        ('pasaporte', 'pasaporte'),
+    ]
     gender=models.CharField(choices = GENDER_CHOICES,max_length=20,null = True)
     phone_number = models.CharField(max_length=45,null=True)   
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     document_type = models.CharField(max_length=50, null=True)  
-    document_number = models.CharField(max_length=50, null=True)  
+    document_number = models.CharField(choices=DOCUMENT_CHOICES,max_length=50,unique=True)  
     def __str__(self):
         return self.firstname + self.lastname
  
@@ -168,7 +172,7 @@ class ClassInstance(models.Model):
 class Attendance(models.Model):
     id=models.AutoField(primary_key=True)
     PREVIOUS_STATE_CHOICES = [('asistire', 'Asistiré'),('no-asistire', 'no-asistire'),('no-responde', 'No responde')]
-    student=models.ForeignKey('Student',on_delete=models.PROTECT, null=True)
+    student=models.ForeignKey('Student',on_delete=models.CASCADE, null=True)
     class_instance=models.ForeignKey('ClassInstance',on_delete=models.CASCADE,null=True)
     state=models.BooleanField(default=False)
     user_previous_state=models.CharField(choices = PREVIOUS_STATE_CHOICES,max_length=40,default='no-responde')
