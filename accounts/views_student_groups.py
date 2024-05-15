@@ -82,7 +82,7 @@ class StudentGroups_allView(ModelViewSet):
         except StudentGroup.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-@permission_classes([IsProfesorOrReadOnly])
+@permission_classes([IsProfesorOfSubjectOrReadOnly])
 class ManageStudentOfGroup(ModelViewSet):
     def get_students_of_group(self, request, group_pk=None):
         try:

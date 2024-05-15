@@ -38,9 +38,9 @@ urlpatterns = [
     path('subjects/<int:subject_pk>/teacher-go-off/', views_subjects.SubjectsExitTeacher.as_view({'delete': 'exit_teacher_auto'}), name='teacher-go-off-auto'),
     #Groups    
     path('subjects/<int:subject_pk>/groups/', views_student_groups.StudentGroups_allView.as_view({'get': 'list_groups', 'post': 'create_group'}), name='group-list'),
-    path('groups/<int:group_pk>/', views_student_groups.StudentGroups_allView.as_view({'get': 'retrieve_group', 'put': 'update_group', 'delete': 'delete_group'}), name='group-detail'),
+    path('subjects/<int:subject_pk>/groups/<int:group_pk>/', views_student_groups.StudentGroups_allView.as_view({'get': 'retrieve_group', 'put': 'update_group', 'delete': 'delete_group'}), name='group-detail'),
     #Ultimo cambio se saca subjects para ver el id de un horario, al parecer despues hay que hacer lo mismo con las otras urls
-    path('groups/<int:group_pk>/students/', views_student_groups.ManageStudentOfGroup.as_view({'get': 'get_students_of_group', 'post': 'post_student_to_group', 'delete': 'delete_student_of_group'}), name='manage-student-group'),
+    path('subjects/<int:subject_pk>/groups/<int:group_pk>/students/', views_student_groups.ManageStudentOfGroup.as_view({'get': 'get_students_of_group', 'post': 'post_student_to_group', 'delete': 'delete_student_of_group'}), name='manage-student-group'),
     #Este delete pide "alumno_pk"
     #ACA se elimina porque los grupos ahora pasan solo a ser de utilidad a los profesores
     #path('grupos/<int:grupo_pk>/alumnos-auto/', views_grupos.HorarioAlumnosAuto.as_view({'post': 'post_alumno_auto', 'delete': 'delete_alumno_auto'}), name='horario-add_alumno'),
