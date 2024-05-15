@@ -4,14 +4,14 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 from rest_framework.views import APIView
 
-from accounts.permissions import IsProfesorOrReadOnly
+from accounts.permissions import IsProfesorOfSubjectOrReadOnly, IsProfesorOrReadOnly
 from accounts.serializers import StudentGroupPostSerializer, StudentGroupSerializer, StudentSerializer
 
 from .models import  Student,Subject,Discipline, Teacher, CustomUser,StudentGroup
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
-@permission_classes([IsProfesorOrReadOnly])
+@permission_classes([IsProfesorOfSubjectOrReadOnly])
 class StudentGroups_allView(ModelViewSet):    
     serializer_class = StudentGroupSerializer       
     queryset = StudentGroup.objects.all()
