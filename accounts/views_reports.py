@@ -18,7 +18,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.core.mail import EmailMessage, get_connection
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsProfesorOrReadOnly])
 def subject_attendance_info_mail(request, subject_pk):
     try:
