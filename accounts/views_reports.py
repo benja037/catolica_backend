@@ -20,7 +20,7 @@ from django.core.mail import EmailMessage, get_connection
 
 @api_view(['GET'])
 @permission_classes([IsProfesorOrReadOnly])
-def subject_attendance_info(request, subject_pk):
+def subject_attendance_info_mail(request, subject_pk):
     try:
         dict_attendance = {}
         
@@ -92,6 +92,42 @@ def subject_attendance_info(request, subject_pk):
                 email.attach_file(file_path)
                 email.send()
         return JsonResponse({"status": "ok"})    
+
+    except Subject.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['GET'])
+@permission_classes([IsProfesorOrReadOnly])
+def subject_attendance_info(request, subject_pk):
+    try:
+        dict_attendance = {}
+        
+        # Obtener el tema específico
+        subject = get_object_or_404(Subject, id=subject_pk)
+        
+        # Obtener todas las asistencias relacionadas con las clases del tema
+        attendances = Attendance.objects.filter(class_instance__subject=subject_pk,class__state ='realizada')
+
+        # Obtener todos los estudiantes del tema
+        students = subject.students.all()       
+
+        for student in students:
+            # Filtrar las asistencias del estudiante en las clases del tema
+            student_attendances = attendances.filter(student=student.id)
+
+            # Contar las asistencias verdaderas y falsas del estudiante
+            attendance_true_count = student_attendances.filter(state=True).count()
+            attendance_false_count = student_attendances.filter(state=False).count()
+            student_serializer = StudentSerializer(student)
+
+            dict_attendance[student_serializer.data['id']] = {
+                'firstname': student_serializer.data['firstname'],
+                'lastname': student_serializer.data['lastname'],
+                'True': attendance_true_count,
+                'False': attendance_false_count
+            }      
+        # Devolver la respuesta con el diccionario de asistencias
+        return Response(dict_attendance, status=status.HTTP_200_OK)
 
     except Subject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
