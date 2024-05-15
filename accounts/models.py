@@ -134,7 +134,7 @@ class StudentGroup(models.Model):
     id=models.AutoField(primary_key=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    students = models.ManyToManyField(Student, related_name='groups')    
+    students = models.ManyToManyField(Student, related_name='groups',blank=True)    
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
