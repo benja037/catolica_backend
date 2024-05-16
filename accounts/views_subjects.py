@@ -189,7 +189,7 @@ class SubjectsStudentAuto(ModelViewSet):
                 if requests_earrings :
                     return Response({"message": "ya enviaste la solicitud"}, status=status.HTTP_403_FORBIDDEN)
                 else:
-                    StudentSubjectRequest.create(student=student, subject=subject,state='pendiente')
+                    StudentSubjectRequest.objects.create(student=student, subject=subject,state='pendiente')
                     return Response({"message": "Solicitud enviada correctamente"}, status=status.HTTP_201_CREATED)
                 #return Response({"message": "No puedes agregar estudiantes a un subject moderado"}, status=status.HTTP_403_FORBIDDEN)            
             subject.students.add(student)
