@@ -5,6 +5,7 @@ from . import views_student_groups
 from . import views_class
 from . import views_attendances
 from . import views_students
+from . import views_requests
 
 from django.urls import path
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView,  TokenVerifyView)
@@ -61,6 +62,9 @@ urlpatterns = [
     #Attendance
     path('subjects/<int:subject_pk>/class/<int:class_pk>/attendances/', views_attendances.Attendances_allView.as_view({'get': 'list_attendances', 'post': 'create_attendance'}), name='asistencia-list'),
     path('subjects/<int:subject_pk>/attendances/<int:attendance_pk>/', views_attendances.Attendances_allView.as_view({'get': 'retrieve_attendance', 'put': 'update_attendance', 'delete': 'delete_attendance'}), name='asistencia-detail'),
+    #Requests
+    path('subjects/<int:subject_pk>/requests/', views_requests.Requests_GetPatch.as_view({'get': 'list_requests'}), name='list-requests'),
+    path('subjects/<int:subject_pk>/requests/<int:request_pk>/', views_requests.Requests_GetPatch.as_view({'patch': 'patch_request'}), name='patch-requests'),
     #Hacer URL que devuelva la cantidad de asistencias e inasistencias de un alumno
     #path('asistencias/<int:alumno_pk>/'),
     #path('class/<int:class_pk>/attendances/create-default/', views_attendances.AttendanceOfClass.as_view({'post': 'create_default'}), name='asistencia-create-default'),
