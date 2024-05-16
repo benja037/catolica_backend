@@ -68,6 +68,12 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
                 representation['rolled'] = True
             else:
                 representation['rolled'] = False
+                if representation['mode'] == "moderado":
+                    requests_earrings = StudentSubjectRequest.objects.filter(student=student, subject=instance,state='pendiente')
+                    if requests_earrings :
+                        representation['requests'] = "solicitado"                        
+                    else:
+                        representation['requests'] = "solicitar"
         if request and request.user.user_type == 'profesor':           
             teacher = self.get_teacher(request)
             id_of_teachers = [teacher['id'] for teacher in representation['teachers']]
@@ -120,14 +126,7 @@ class SubjectGetSerializer(serializers.ModelSerializer):
             if student.id in id_of_students:
                 representation['rolled'] = True
             else:
-                representation['rolled'] = False
-                if representation['mode'] == "moderado":
-                    requests_earrings = StudentSubjectRequest.objects.filter(student=student, subject=instance,state='pendiente')
-                    if requests_earrings :
-                        representation['requests'] = "solicitado"                        
-                    else:
-                        representation['requests'] = "solicitar"
-                 
+                representation['rolled'] = False                
         if request and request.user.user_type == 'profesor':       
             teacher = self.get_teacher(request)
             id_of_teachers = [teacher['id'] for teacher in representation['teachers']]
