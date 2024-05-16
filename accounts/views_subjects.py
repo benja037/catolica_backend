@@ -6,7 +6,7 @@ from rest_framework.decorators import action,permission_classes
 from accounts.permissions import  IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
 from accounts.serializers import  StudentSerializer, SubjectRetrieveSerializer, SubjectGetSerializer, SubjectPatchSerializer, SubjectPostSerializer
 
-from .models import Attendance, ClassInstance, Student,Subject,Discipline, Teacher, CustomUser,StudentGroup
+from .models import Attendance, ClassInstance, Student, StudentSubjectRequest,Subject,Discipline, Teacher, CustomUser,StudentGroup
 from rest_framework.permissions import IsAuthenticated
 
 @permission_classes([IsProfesorOrReadOnly])
@@ -182,8 +182,16 @@ class SubjectsStudentAuto(ModelViewSet):
         try:            
             student = self.get_student(request)              
             subject = Subject.objects.get(id=subject_pk)
-            if subject.state == 'privado':
+            if subject.mode == 'privado':
                 return Response({"message": "No puedes agregar estudiantes a un subject privado"}, status=status.HTTP_403_FORBIDDEN)
+            if subject.mode == 'moderado':
+                requests_earrings = StudentSubjectRequest.objects.filter(student=student, subject=subject,state='pendiente')
+                if requests_earrings :
+                    return Response({"message": "ya enviaste la solicitud"}, status=status.HTTP_403_FORBIDDEN)
+                else:
+                    StudentSubjectRequest.create(student=student, subject=subject,state='pendiente')
+                    return Response({"message": "Solicitud enviada correctamente"}, status=status.HTTP_201_CREATED)
+                #return Response({"message": "No puedes agregar estudiantes a un subject moderado"}, status=status.HTTP_403_FORBIDDEN)            
             subject.students.add(student)
             return Response({"message": "Estudiante agregado correctamente"}, status=status.HTTP_201_CREATED)
         except Student.DoesNotExist:

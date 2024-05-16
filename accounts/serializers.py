@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ClassInstance, Discipline, StudentGroup, Teacher, CustomUser,Student,Subject,Attendance
+from .models import ClassInstance, Discipline, StudentGroup, StudentSubjectRequest, Teacher, CustomUser,Student,Subject,Attendance
 from rest_framework.validators import ValidationError
 from rest_framework import status
 
@@ -121,6 +121,13 @@ class SubjectGetSerializer(serializers.ModelSerializer):
                 representation['rolled'] = True
             else:
                 representation['rolled'] = False
+                if representation['mode'] == "moderado":
+                    requests_earrings = StudentSubjectRequest.objects.filter(student=student, subject=instance,state='pendiente')
+                    if requests_earrings :
+                        representation['requests'] = "solicitado"                        
+                    else:
+                        representation['requests'] = "solicitar"
+                 
         if request and request.user.user_type == 'profesor':       
             teacher = self.get_teacher(request)
             id_of_teachers = [teacher['id'] for teacher in representation['teachers']]
@@ -170,6 +177,11 @@ class AttendanceSerializerOnlyStateChange(serializers.ModelSerializer):
     class Meta:
         model = Attendance
         fields=['id','student','class_instance','state','user_previous_state']
+
+class StudentSubjectRequestSerializer(serializers.ModelSerializer):     
+    class Meta:
+        model = Subject
+        fields=['id','subject','student','state']
 
 
 #===============================================================================
