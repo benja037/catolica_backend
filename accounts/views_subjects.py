@@ -182,6 +182,8 @@ class SubjectsStudentAuto(ModelViewSet):
         try:            
             student = self.get_student(request)              
             subject = Subject.objects.get(id=subject_pk)
+            if subject.state == 'privado':
+                return Response({"message": "No puedes agregar estudiantes a un subject privado"}, status=status.HTTP_403_FORBIDDEN)
             subject.students.add(student)
             return Response({"message": "Estudiante agregado correctamente"}, status=status.HTTP_201_CREATED)
         except Student.DoesNotExist:
