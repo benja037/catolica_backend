@@ -96,7 +96,7 @@ class SubjectGetSerializer(serializers.ModelSerializer):
     teachers = SpecialTeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subject
-        fields=['id','subject_name','teachers','discipline','num_max_students','mode','finished']
+        fields=['id','subject_name','teachers','students','discipline','num_max_students','mode','finished']
     def get_student(self,request):        
         try:
             student = Student.objects.get(user=request.user)            
