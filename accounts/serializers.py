@@ -60,11 +60,10 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        request = self.context.get('request')
-        students = representation.get('students', [])
+        request = self.context.get('request')        
         if request and request.user.user_type == 'alumno':            
             student = self.get_student(request)
-            id_of_students = [student['id'] for student in students]
+            id_of_students = [student['id'] for student in representation['students']]
             if student.id in id_of_students:
                 representation['rolled'] = True
             else:
@@ -93,6 +92,7 @@ class SubjectPatchSerializer(serializers.ModelSerializer):
 
 #courses/<int:course_pk>/subjects/
 class SubjectGetSerializer(serializers.ModelSerializer):  
+    students = SimpleStudentSerializer(many=True,read_only=True)
     teachers = SpecialTeacherSerializer(many=True, read_only=True)  
     class Meta:
         model = Subject
