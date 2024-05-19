@@ -23,6 +23,7 @@ from django.core.mail import EmailMessage, get_connection
 @permission_classes([IsProfesorOrReadOnly])
 def subject_attendance_info_mail(request, subject_pk):
     try:
+        print(os.environ.get('RESEND_API_KEY'))
         # Obtener el tema específico
         subject = get_object_or_404(Subject, id=subject_pk)
         
@@ -86,7 +87,7 @@ def subject_attendance_info_mail(request, subject_pk):
         recipient_list = ["infoasistencias.ca@gmail.com",]
         from_email = "onboarding@resend.dev"
         message = "<strong>it works!</strong>"
-
+        
         with get_connection(
             host=settings.RESEND_SMTP_HOST,
             port=settings.RESEND_SMTP_PORT,
@@ -103,7 +104,7 @@ def subject_attendance_info_mail(request, subject_pk):
                 email.attach("asistencias.xlsx", temp_file.file_data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 email.send()
         temp_file.delete()
-        return JsonResponse({"status": "ok"})    
+        return JsonResponse({"status": "ok","key":os.environ.get('RESEND_API_KEY')})    
 
     except Subject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
