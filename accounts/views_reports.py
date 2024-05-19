@@ -23,7 +23,7 @@ from django.core.mail import EmailMessage, get_connection
 @permission_classes([IsProfesorOrReadOnly])
 def subject_attendance_info_mail(request, subject_pk):
     try:
-        print(os.environ.get('RESEND_API_KEY'))
+        #print(os.environ.get('RESEND_API_KEY'))
         # Obtener el tema específico
         subject = get_object_or_404(Subject, id=subject_pk)
         
@@ -104,7 +104,7 @@ def subject_attendance_info_mail(request, subject_pk):
                 email.attach("asistencias.xlsx", temp_file.file_data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 email.send()
         temp_file.delete()
-        return JsonResponse({"status": "ok","key":os.environ.get('RESEND_API_KEY')})    
+        return JsonResponse({"status": "ok"})    
 
     except Subject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -113,7 +113,7 @@ def subject_attendance_info_mail(request, subject_pk):
 @permission_classes([IsProfesorOrReadOnly])
 def subject_attendance_info(request, subject_pk):
     try:
-        print(os.environ.get('RESEND_API_KEY'))
+        #print(os.environ.get('RESEND_API_KEY'))
         dict_attendance = {}
         
         # Obtener el tema específico
@@ -141,8 +141,8 @@ def subject_attendance_info(request, subject_pk):
                 'False': attendance_false_count
             }      
         # Devolver la respuesta con el diccionario de asistencias
-        #return Response(dict_attendance, status=status.HTTP_200_OK)
-        return JsonResponse({"status": "ok","key":os.environ.get('RESEND_API_KEY')})    
+        return Response(dict_attendance, status=status.HTTP_200_OK)
+        #return JsonResponse({"status": "ok","key":os.environ.get('RESEND_API_KEY')})    
 
     except Subject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
