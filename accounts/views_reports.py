@@ -113,6 +113,7 @@ def subject_attendance_info_mail(request, subject_pk):
 @permission_classes([IsProfesorOrReadOnly])
 def subject_attendance_info(request, subject_pk):
     try:
+        print(os.environ.get('RESEND_API_KEY'))
         dict_attendance = {}
         
         # Obtener el tema específico
@@ -140,7 +141,8 @@ def subject_attendance_info(request, subject_pk):
                 'False': attendance_false_count
             }      
         # Devolver la respuesta con el diccionario de asistencias
-        return Response(dict_attendance, status=status.HTTP_200_OK)
+        #return Response(dict_attendance, status=status.HTTP_200_OK)
+        return JsonResponse({"status": "ok","key":os.environ.get('RESEND_API_KEY')})    
 
     except Subject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
