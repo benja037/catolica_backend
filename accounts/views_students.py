@@ -88,9 +88,6 @@ class Students_of_userView(ModelViewSet):
     def create_student_of_user(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
