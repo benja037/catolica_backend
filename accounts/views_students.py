@@ -65,3 +65,32 @@ class Students_allView(ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Student.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+#Get students of user "apoderado"      
+@permission_classes([IsAuthenticated])
+class Students_of_userView(ModelViewSet):    
+    serializer_class = StudentSerializer       
+    queryset = Student.objects.all()
+    def get_queryset(self):        
+        all_students = Student.objects.all()       
+        serializer = self.serializer_class(all_students, many=True)
+        return Response(serializer.data)
+    
+    def list_students_of_user(self,request):
+        try:
+            students_of_user = Student.objects.filter(user=request.user)
+            serializer = SimpleStudentSerializer(students_of_user, many=True)
+            return Response(serializer.data)
+        except Student.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    @action(detail=False, methods=['post'])
+    def create_student_of_user(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
