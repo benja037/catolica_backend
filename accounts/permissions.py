@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework import status
-from accounts.models import Subject, Teacher, CustomUser
+from accounts.models import Student, Subject, Teacher, CustomUser
 from rest_framework.response import Response
 
 
@@ -35,6 +35,26 @@ class IsProfesorOfSubjectOrReadOnly(BasePermission):
             raise status.HTTP_404_NOT_FOUND
           
     def has_permission(self, request, view):
+        if request.user.is_superuser or request.user.is_staff:
+            return True
+        if request.method in SAFE_METHODS:
+            return True
+        else:
+            teacher = self.get_teacher(request)
+            subject = self.get_subject(view.kwargs['subject_pk'])
+            if teacher in subject.teachers.all():
+                return True            
+        return(False)
+    
+class IsOwnerofStudent(BasePermission):          
+    def has_permission(self, request, view):
+        request_user = request.user
+        student_id = request.query_params.get('student_id')
+        student = Student.objects.get(id=student_id)
+        student_user = student.user
+        if request_user != student_user:
+            return False            
+
         if request.user.is_superuser or request.user.is_staff:
             return True
         if request.method in SAFE_METHODS:
