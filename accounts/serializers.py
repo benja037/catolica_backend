@@ -40,7 +40,7 @@ class SimpleStudentSerializer(serializers.ModelSerializer):
 #subjects/<int:pk>/
 class SubjectRetrieveSerializer(serializers.ModelSerializer):  
     teachers = TeacherSerializer(many=True, read_only=True)
-    students = StudentSerializer(many=True, read_only=True)  
+    students = SimpleStudentSerializer(many=True, read_only=True)  
     class Meta:
         model = Subject
         fields=['id','subject_name','teachers','students','discipline','num_max_students','mode','finished']
@@ -81,6 +81,37 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
                 representation['rolled'] = True            
             else:
                 representation['rolled'] = False
+        return representation
+    
+class SubjectRetrieveApoderadoSerializer(serializers.ModelSerializer):  
+    teachers = TeacherSerializer(many=True, read_only=True)
+    students = SimpleStudentSerializer(many=True, read_only=True)  
+    class Meta:
+        model = Subject
+        fields=['id','subject_name','teachers','students','discipline','num_max_students','mode','finished']      
+   
+    def get_student_by_id(self, student_id):        
+        try:
+            student = Student.objects.get(id=student_id)            
+            return student
+        except Student.DoesNotExist:
+            raise serializers.ValidationError("Student does not exist")     
+        
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        student_id = request.query_params.get('student_id')  # Retrieve the student_id from the URL query parameters
+
+        if student_id:
+            try:
+                student = self.get_student_by_id(student_id)
+                id_of_students = [student_data['id'] for student_data in representation['students']]
+                representation['rolled'] = student.id in id_of_students
+            except serializers.ValidationError:
+                representation['rolled'] = False  # If the student doesn't exist, consider them not enrolled
+        else:
+            representation['rolled'] = False  # If no student_id is provided, consider them not enrolled
+
         return representation
     
 #courses/<int:course_pk>/subjects/
@@ -134,6 +165,37 @@ class SubjectGetSerializer(serializers.ModelSerializer):
                 representation['rolled'] = True            
             else:
                 representation['rolled'] = False
+        return representation
+    
+class SubjectGetApoderadoSerializer(serializers.ModelSerializer):  
+    students = SimpleStudentSerializer(many=True,read_only=True)
+    teachers = SpecialTeacherSerializer(many=True, read_only=True)  
+    class Meta:
+        model = Subject
+        fields=['id','subject_name','teachers','students','discipline','num_max_students','mode','finished']
+    def get_student_by_id(self, student_id):        
+        try:
+            student = Student.objects.get(id=student_id)            
+            return student
+        except Student.DoesNotExist:
+            raise serializers.ValidationError("Student does not exist")        
+    
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        student_id = request.query_params.get('student_id')  # Retrieve the student_id from the URL query parameters
+
+        if student_id:
+            try:
+                student = self.get_student_by_id(student_id)
+                id_of_students = [student_data['id'] for student_data in representation['students']]
+                representation['rolled'] = student.id in id_of_students
+            except serializers.ValidationError:
+                representation['rolled'] = False  # If the student doesn't exist, consider them not enrolled
+        else:
+            representation['rolled'] = False  # If no student_id is provided, consider them not enrolled
+
         return representation
 #----------ClassInstance Serializer-------------------
 class ClassInstanceSerializer(serializers.ModelSerializer):
