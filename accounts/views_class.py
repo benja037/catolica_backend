@@ -92,7 +92,7 @@ class Subjects_Class_allView(ModelViewSet):
     
     def list(self,request,subject_pk=None,date=None):
         try:       
-            classInstances = ClassInstance.objects.filter(subject=subject_pk, date=date)            
+            classInstances = ClassInstance.objects.filter(subject=subject_pk, date=date).order_by('time_start')            
             class_data = ClassInstanceSerializer(classInstances, many=True).data                
             return Response(class_data)
         except ClassInstance.DoesNotExist:
