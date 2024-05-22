@@ -99,11 +99,14 @@ class Students_check_rutView(ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def check_rut(self, request, tipo_documento, numero_documento):
+        user = request.user
         students = Student.objects.filter(document_type=tipo_documento, document_number=numero_documento)
 
         if students.exists():
             student = students.first()
             if student.user:
+                student.user = user
+                student.save()
                 return Response({'message': 'El estudiante ya está creado y tiene un usuario asociado.'}, status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'El estudiante ya está creado pero no tiene un usuario asociado.'}, status=status.HTTP_200_OK)
