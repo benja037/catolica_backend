@@ -24,6 +24,7 @@ urlpatterns = [
     #Students
     path('students/', views_students.Students_allView.as_view({'get': 'list_students', 'post': 'create_student'}), name='students-list'),
     path('students/<int:student_pk>/', views_students.Students_allView.as_view({'get': 'retrieve_student', 'put': 'update_student'}), name='student-detail'),
+    path('students/check-rut/<str:tipo_documento>/<str:numero_documento>/', views_students.Students_check_rutView.as_view({'get': 'check_rut'}), name='check-rut-student'),
     #Students of user "apoderado"
     path('students/get-user-students/', views_students.Students_of_userView.as_view({'get': 'list_students_of_user'}), name='get-students-of-user'),
     path('students/post-user-students/', views_students.Students_of_userView.as_view({'post': 'create_student_of_user'}), name='post-students-of-user'),

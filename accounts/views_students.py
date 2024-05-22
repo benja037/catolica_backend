@@ -91,3 +91,21 @@ class Students_of_userView(ModelViewSet):
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+#Get status of rut on a message     
+@permission_classes([IsAuthenticated])
+class Students_check_rutView(ModelViewSet):
+    queryset = Student.objects.all()  # Assuming Student is your model
+
+    @action(detail=False, methods=['get'])
+    def check_rut(self, request, tipo_documento, numero_documento):
+        students = Student.objects.filter(document_type=tipo_documento, document_number=numero_documento)
+
+        if students.exists():
+            student = students.first()
+            if student.user:
+                return Response({'message': 'El estudiante ya está creado y tiene un usuario asociado.'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'El estudiante ya está creado pero no tiene un usuario asociado.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'El estudiante no está creado.'}, status=status.HTTP_200_OK)
