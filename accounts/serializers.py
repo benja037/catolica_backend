@@ -264,7 +264,7 @@ class AttendanceSerializerOnlyStateChange(serializers.ModelSerializer):
 class StudentSubjectRequestSerializer(serializers.ModelSerializer): 
     student = SimpleStudentSerializer(read_only=True)    
     class Meta:
-        model = Subject
+        model = StudentSubjectRequest
         fields=['id','subject','student','state']
 
 
