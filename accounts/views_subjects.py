@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
-from accounts.permissions import  IsOwnerofStudent, IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
+from accounts.permissions import  IsOwnerofStudent, IsOwnerofStudentPost, IsProfesorOfSubjectOrReadOnly,IsProfesorOrReadOnly
 from accounts.serializers import  StudentSerializer, SubjectGetApoderadoSerializer, SubjectRetrieveApoderadoSerializer, SubjectRetrieveSerializer, SubjectGetSerializer, SubjectPatchSerializer, SubjectPostSerializer
 
 from .models import Attendance, ClassInstance, Student, StudentSubjectRequest,Subject,Discipline, Teacher, CustomUser,StudentGroup
@@ -202,11 +202,12 @@ class SubjectsExitTeacher(ModelViewSet):
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
 #Views Apoderados
-@permission_classes([IsOwnerofStudent])
+@permission_classes([IsOwnerofStudentPost])
 class SubjectsStudentAuto(ModelViewSet):
     def get_student(self,request):        
         try:
             profile_id = request.data.get('profile_id')
+            print("profile_id",profile_id)
             student = Student.objects.get(id=profile_id)         #Falta poner que si es profesor no pueda usar esta vista  
             return student
         except Student.DoesNotExist:

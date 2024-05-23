@@ -46,22 +46,41 @@ class IsProfesorOfSubjectOrReadOnly(BasePermission):
                 return True            
         return(False)
     
+#GET
 class IsOwnerofStudent(BasePermission):          
     def has_permission(self, request, view):
-        request_user = request.user
+        request_user = CustomUser.objects.get(email=request.user)
         student_id = request.query_params.get('student_id')
-        student = Student.objects.get(id=student_id)
-        student_user = student.user
+        student_user = Student.objects.get(id=student_id).user
+         
         if request_user != student_user:
             return False            
 
         if request.user.is_superuser or request.user.is_staff:
             return True
         if request.method in SAFE_METHODS:
+            return True                   
+        return(False)
+
+#POST
+class IsOwnerofStudentPost(BasePermission):          
+    def has_permission(self, request, view):
+        request_user = CustomUser.objects.get(email=request.user)
+        student_id = request.data.get('profile_id')
+        print("request_user", request_user.id)
+        print("student_id",student_id)
+        student_user = Student.objects.get(id=student_id).user 
+        print("student_user", student_user.id)      
+         
+        if not student_id:
+            return False
+        
+        if request_user == student_user:
+            return True            
+
+        if request.user.is_superuser or request.user.is_staff:
             return True
-        else:
-            teacher = self.get_teacher(request)
-            subject = self.get_subject(view.kwargs['subject_pk'])
-            if teacher in subject.teachers.all():
-                return True            
+        if request.method in SAFE_METHODS:
+            return True
+                
         return(False)
