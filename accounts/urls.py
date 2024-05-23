@@ -72,6 +72,7 @@ urlpatterns = [
     #Requests
     path('subjects/<int:subject_pk>/requests/', views_requests.Requests_GetPatch.as_view({'get': 'list_requests'}), name='list-requests'),
     path('subjects/<int:subject_pk>/requests/<int:request_pk>/', views_requests.Requests_GetPatch.as_view({'patch': 'patch_request'}), name='patch-requests'),
+    path('subjects/<int:subject_pk>/requests/<int:request_pk>/acceptordeny-subject/', views_requests.Requests_GetPatch.as_view({'patch': 'acceptordeny_subject_request'}), name='acceptordeny-subject-requests'),
     #Hacer URL que devuelva la cantidad de asistencias e inasistencias de un alumno
     #path('asistencias/<int:alumno_pk>/'),
     #path('class/<int:class_pk>/attendances/create-default/', views_attendances.AttendanceOfClass.as_view({'post': 'create_default'}), name='asistencia-create-default'),
