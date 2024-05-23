@@ -113,6 +113,8 @@ class SubjectRetrieveApoderadoSerializer(serializers.ModelSerializer):
                     subject=instance,
                     state='pendiente'
                 ).exists()
+
+                representation['request'] = pending_request_exists
             except serializers.ValidationError:
                 representation['rolled'] = False  # If the student doesn't exist, consider them not enrolled
                 representation['request'] = False
