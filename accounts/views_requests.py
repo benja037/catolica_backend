@@ -27,7 +27,7 @@ class Requests_GetPatch(ModelViewSet):
     def list_requests(self,request,subject_pk):
         try:
             subject = Subject.objects.get(id=subject_pk)
-            subjects_request = StudentSubjectRequest.objects.filter(subject=subject)
+            subjects_request = StudentSubjectRequest.objects.filter(subject=subject,state='pendiente')
             serializer = StudentSubjectRequestSerializer(subjects_request, many=True)
             return Response(serializer.data)
         except Discipline.DoesNotExist:
