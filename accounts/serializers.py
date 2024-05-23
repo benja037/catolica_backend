@@ -107,10 +107,18 @@ class SubjectRetrieveApoderadoSerializer(serializers.ModelSerializer):
                 student = self.get_student_by_id(student_id)
                 id_of_students = [student_data['id'] for student_data in representation['students']]
                 representation['rolled'] = student.id in id_of_students
+
+                pending_request_exists = StudentSubjectRequest.objects.filter(
+                    student=student,
+                    subject=instance,
+                    state='pendiente'
+                ).exists()
             except serializers.ValidationError:
                 representation['rolled'] = False  # If the student doesn't exist, consider them not enrolled
+                representation['request'] = False
         else:
             representation['rolled'] = False  # If no student_id is provided, consider them not enrolled
+            representation['request'] = False
 
         return representation
     
