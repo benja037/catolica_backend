@@ -3,10 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
-from accounts.permissions import IsProfesorOfSubjectOrReadOnly, IsProfesorOrReadOnly
+from accounts.permissions import IsOwnerofStudentPost, IsProfesorOfSubjectOrReadOnly, IsProfesorOrReadOnly
 from accounts.serializers import ClassInstancePutSerializer, ClassInstanceSerializer, StudentSerializer
 
-from .models import Attendance, Discipline, StudentGroup, Student,Subject,ClassInstance, Teacher, CustomUser
+from .models import Attendance, Discipline, StudentClassRequest, StudentGroup, Student,Subject,ClassInstance, Teacher, CustomUser
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
@@ -198,4 +198,48 @@ class ClassExitTeacher(ModelViewSet):
             classInstance.teachers.remove(teacher)            
             return Response({"message": "Teacher eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)       
         except Subject.DoesNotExist:
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+#APODERADOS
+#Views Apoderados
+@permission_classes([IsOwnerofStudentPost])
+class ClassStudentAuto(ModelViewSet):
+    def get_student(self,request):        
+        try:
+            profile_id = request.data.get('profile_id')
+            print("profile_id",profile_id)
+            student = Student.objects.get(id=profile_id)         #Falta poner que si es profesor no pueda usar esta vista  
+            return student
+        except Student.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+    def post_student_auto(self, request, subject_pk=None,class_pk=None):
+        try:            
+            student = self.get_student(request)              
+            class_instance = ClassInstance.objects.get(id=class_pk)
+            if class_instance.mode == 'privado':
+                return Response({"message": "No puedes agregar estudiantes a una clase privada"}, status=status.HTTP_403_FORBIDDEN)
+            if class_instance.mode == 'moderado':
+                requests_earrings = StudentClassRequest.objects.filter(student=student, class_instance=class_instance,state='pendiente')
+                if requests_earrings :
+                    return Response({"message": "ya enviaste la solicitud"}, status=status.HTTP_403_FORBIDDEN)
+                else:
+                    StudentClassRequest.objects.create(student=student, class_instance=class_instance,state='pendiente')
+                    return Response({"message": "Solicitud enviada correctamente"}, status=status.HTTP_201_CREATED)
+                #return Response({"message": "No puedes agregar estudiantes a un subject moderado"}, status=status.HTTP_403_FORBIDDEN)            
+            class_instance.students.add(student)
+            return Response({"message": "Estudiante agregado correctamente"}, status=status.HTTP_201_CREATED)
+        except Student.DoesNotExist:
+            return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except ClassInstance.DoesNotExist:
+            return Response({"message": "Clase no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+    def delete_student_auto(self,request, subject_pk=None,class_pk=None):
+        try:
+            student = self.get_student(request)
+            class_instance = ClassInstance.objects.get(id=class_pk)
+            class_instance.students.remove(student)
+            return Response({"message": "Estudiante eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        except Student.DoesNotExist:
+            return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except ClassInstance.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
