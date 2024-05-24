@@ -198,6 +198,14 @@ class StudentSubjectRequest(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
+class StudentClassRequest(models.Model):
+    id=models.AutoField(primary_key=True)
+    class_instance = models.ForeignKey('ClassInstance',on_delete=models.CASCADE,null=True)  
+    student=models.ForeignKey('Student',on_delete=models.CASCADE, null=True)     
+    STATE_CHOICES = [('pendiente','pendiente'),('aceptado','aceptado'),('rechazado','rechazado')]
+    state = models.CharField(max_length=20, default='pendiente')
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
 
 
 class TempFile(models.Model):

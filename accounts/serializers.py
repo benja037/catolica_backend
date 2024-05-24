@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ClassInstance, Discipline, StudentGroup, StudentSubjectRequest, Teacher, CustomUser,Student,Subject,Attendance
+from .models import ClassInstance, Discipline, StudentClassRequest, StudentGroup, StudentSubjectRequest, Teacher, CustomUser,Student,Subject,Attendance
 from rest_framework.validators import ValidationError
 from rest_framework import status
 
@@ -267,6 +267,11 @@ class StudentSubjectRequestSerializer(serializers.ModelSerializer):
         model = StudentSubjectRequest
         fields=['id','subject','student','state']
 
+class StudentClassRequestSerializer(serializers.ModelSerializer): 
+    student = SimpleStudentSerializer(read_only=True)    
+    class Meta:
+        model = StudentClassRequest
+        fields=['id','class_instance','student','state']
 
 #===============================================================================
 class SignUpSerializer(serializers.ModelSerializer):    
