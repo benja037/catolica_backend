@@ -203,7 +203,7 @@ class SubjectsExitTeacher(ModelViewSet):
         
 #Views Apoderados
 @permission_classes([IsOwnerofStudentPost])
-class SubjectsStudentAuto(ModelViewSet):
+class Apoderados_Subject_Post_Get(ModelViewSet):
     def get_student(self,request):        
         try:
             profile_id = request.data.get('profile_id')
