@@ -236,26 +236,26 @@ class Apoderados_Subject_Post_add(ModelViewSet):
         
 
 @permission_classes([IsOwnerofStudentPost])
-class Apoderados_Subject_Post_remove(ModelViewSet):
-    def get_student(self,request):        
+class Apoderados_Subject_delete(ModelViewSet):
+    permission_classes = [IsAuthenticated, IsOwnerofStudentPost]
+
+    def get_student(self, profile_id):
         try:
-            profile_id = request.data.get('profile_id')
-            print("profile_id",profile_id)
-            student = Student.objects.get(id=profile_id)         #Falta poner que si es profesor no pueda usar esta vista  
+            student = Student.objects.get(id=profile_id)
             return student
         except Student.DoesNotExist:
-            raise status.HTTP_404_NOT_FOUND    
-                    
-    def delete_student_auto(self,request, subject_pk=None):
+            raise status.HTTP_404_NOT_FOUND
+
+    def delete_student_auto(self, request, subject_pk=None, profile_id=None):
         try:
-            student = self.get_student(request)
+            student = self.get_student(profile_id)
             subject = Subject.objects.get(id=subject_pk)
             subject.students.remove(student)
             return Response({"message": "Estudiante eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
         except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         except Subject.DoesNotExist:
-            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND) 
 
 
 #Similar to get subjects of teacher difference in serializer, that check if profile estudent is rolled  
