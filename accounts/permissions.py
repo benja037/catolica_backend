@@ -46,7 +46,7 @@ class IsProfesorOfSubjectOrReadOnly(BasePermission):
                 return True            
         return(False)
     
-#GET
+
 class IsOwnerofStudent(BasePermission):          
     def has_permission(self, request, view):
         request_user = CustomUser.objects.get(email=request.user)
