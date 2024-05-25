@@ -239,17 +239,17 @@ class Apoderados_Subject_Post_add(ModelViewSet):
 class Apoderados_Subject_delete(ModelViewSet):
     permission_classes = [IsAuthenticated, IsOwnerofStudentPost]
 
-    def get_student(self, profile_id):
+    def get_student(self, student_id):
         try:
-            student = Student.objects.get(id=profile_id)
+            student = Student.objects.get(id=student_id)
             return student
         except Student.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND
 
     def delete_student_auto(self, request, subject_pk=None):
         try:
-            profile_id = request.data.get('profile_id')
-            student = self.get_student(profile_id)
+            student_id = request.query_params.get('student_id')
+            student = self.get_student(student_id)
             subject = Subject.objects.get(id=subject_pk)
             subject.students.remove(student)
             return Response({"message": "Estudiante eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
