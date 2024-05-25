@@ -66,7 +66,7 @@ class IsOwnerofStudent(BasePermission):
 class IsOwnerofStudentPost(BasePermission):          
     def has_permission(self, request, view):
         request_user = CustomUser.objects.get(email=request.user)
-        student_id = request.data.get('profile_id')
+        student_id = request.query_params.get('student_id')
         print("request_user", request_user.id)
         print("student_id",student_id)
         student_user = Student.objects.get(id=student_id).user 
