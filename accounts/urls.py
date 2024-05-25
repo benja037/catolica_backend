@@ -44,7 +44,7 @@ urlpatterns = [
     path('apoderados/disciplines/<int:discipline_pk>/subjects/', views_subjects.Apoderados_Subjects_Get.as_view({'get': 'list_subjects'}), name='apoderados-subject'),
     path('apoderados/subjects/<int:subject_pk>/', views_subjects.Apoderados_Subjects_Retrieve.as_view({'get': 'retrieve_subject'}), name='apoderados-subject-detail'),
     path('apoderados/subjects/<int:subject_pk>/students-auto-add/', views_subjects.Apoderados_Subject_Post_add.as_view({'post': 'post_student_auto'}), name='subject-add-alumno-auto'),
-    path('apoderados/subjects/<int:subject_pk>/students-auto-remove/<int:profile_id>/', views_subjects.Apoderados_Subject_delete.as_view({'delete': 'delete_student_auto'}), name='subject-remove-alumno-auto'),
+    path('apoderados/subjects/<int:subject_pk>/students-auto-remove/', views_subjects.Apoderados_Subject_delete.as_view({'delete': 'delete_student_auto'}), name='subject-remove-alumno-auto'),
     #Groups    
     path('subjects/<int:subject_pk>/groups/', views_student_groups.StudentGroups_allView.as_view({'get': 'list_groups', 'post': 'create_group'}), name='group-list'),
     path('subjects/<int:subject_pk>/groups/<int:group_pk>/', views_student_groups.StudentGroups_allView.as_view({'get': 'retrieve_group', 'put': 'update_group', 'delete': 'delete_group'}), name='group-detail'),

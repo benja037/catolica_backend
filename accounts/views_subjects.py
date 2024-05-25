@@ -246,8 +246,9 @@ class Apoderados_Subject_delete(ModelViewSet):
         except Student.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND
 
-    def delete_student_auto(self, request, subject_pk=None, profile_id=None):
+    def delete_student_auto(self, request, subject_pk=None):
         try:
+            profile_id = request.data.get('profile_id')
             student = self.get_student(profile_id)
             subject = Subject.objects.get(id=subject_pk)
             subject.students.remove(student)
