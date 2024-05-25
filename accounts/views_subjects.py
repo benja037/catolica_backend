@@ -203,7 +203,7 @@ class SubjectsExitTeacher(ModelViewSet):
         
 #Views Apoderados
 @permission_classes([IsOwnerofStudentPost])
-class Apoderados_Subject_Post_Get(ModelViewSet):
+class Apoderados_Subject_Post_add(ModelViewSet):
     def get_student(self,request):        
         try:
             profile_id = request.data.get('profile_id')
@@ -231,8 +231,21 @@ class Apoderados_Subject_Post_Get(ModelViewSet):
         except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         except Subject.DoesNotExist:
-            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)       
+   
         
+
+@permission_classes([IsOwnerofStudentPost])
+class Apoderados_Subject_Post_remove(ModelViewSet):
+    def get_student(self,request):        
+        try:
+            profile_id = request.data.get('profile_id')
+            print("profile_id",profile_id)
+            student = Student.objects.get(id=profile_id)         #Falta poner que si es profesor no pueda usar esta vista  
+            return student
+        except Student.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+                    
     def delete_student_auto(self,request, subject_pk=None):
         try:
             student = self.get_student(request)
@@ -243,6 +256,7 @@ class Apoderados_Subject_Post_Get(ModelViewSet):
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         except Subject.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
 
 #Similar to get subjects of teacher difference in serializer, that check if profile estudent is rolled  
 @permission_classes([IsOwnerofStudent])
