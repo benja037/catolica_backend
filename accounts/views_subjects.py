@@ -204,17 +204,17 @@ class SubjectsExitTeacher(ModelViewSet):
 #Views Apoderados
 @permission_classes([IsOwnerofStudentPost])
 class Apoderados_Subject_Post_add(ModelViewSet):
-    def get_student(self,request):        
+    def get_student(self, student_id):
         try:
-            student_id = request.query_params.get('student_id')
-            print("student_id",student_id)
-            student = Student.objects.get(id=student_id)         #Falta poner que si es profesor no pueda usar esta vista  
+            student = Student.objects.get(id=student_id)
             return student
         except Student.DoesNotExist:
-            raise status.HTTP_404_NOT_FOUND    
+            raise status.HTTP_404_NOT_FOUND   
+        
     def post_student_auto(self, request, subject_pk=None):
-        try:            
-            student = self.get_student(request)              
+        try: 
+            student_id = request.query_params.get('student_id')           
+            student = self.get_student(student_id)              
             subject = Subject.objects.get(id=subject_pk)
             if subject.mode == 'privado':
                 return Response({"message": "No puedes agregar estudiantes a un subject privado"}, status=status.HTTP_403_FORBIDDEN)
