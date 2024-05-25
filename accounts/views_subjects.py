@@ -206,9 +206,9 @@ class SubjectsExitTeacher(ModelViewSet):
 class Apoderados_Subject_Post_add(ModelViewSet):
     def get_student(self,request):        
         try:
-            profile_id = request.data.get('profile_id')
-            print("profile_id",profile_id)
-            student = Student.objects.get(id=profile_id)         #Falta poner que si es profesor no pueda usar esta vista  
+            student_id = request.query_params.get('student_id')
+            print("student_id",student_id)
+            student = Student.objects.get(id=student_id)         #Falta poner que si es profesor no pueda usar esta vista  
             return student
         except Student.DoesNotExist:
             raise status.HTTP_404_NOT_FOUND    
