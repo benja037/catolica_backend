@@ -202,7 +202,7 @@ class SubjectsExitTeacher(ModelViewSet):
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
 #Views Apoderados
-@permission_classes([IsOwnerofStudentPost])
+@permission_classes([IsOwnerofStudent])
 class Apoderados_Subject_Post_add(ModelViewSet):
     def get_student(self, student_id):
         try:
@@ -235,7 +235,7 @@ class Apoderados_Subject_Post_add(ModelViewSet):
    
         
 
-@permission_classes([IsOwnerofStudentPost])
+@permission_classes([IsOwnerofStudent])
 class Apoderados_Subject_delete(ModelViewSet):
     permission_classes = [IsAuthenticated, IsOwnerofStudentPost]
 
