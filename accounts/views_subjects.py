@@ -213,7 +213,8 @@ class Apoderados_Subject_Post_add(ModelViewSet):
         
     def post_student_auto(self, request, subject_pk=None):
         try: 
-            student_id = request.query_params.get('student_id')           
+            student_id = request.query_params.get('student_id')   
+            print("student_id",student_id)        
             student = self.get_student(student_id)              
             subject = Subject.objects.get(id=subject_pk)
             if subject.mode == 'privado':
