@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
-from accounts.permissions import IsOwnerofStudentPost, IsProfesorOfSubjectOrReadOnly, IsProfesorOrReadOnly
+from accounts.permissions import  IsOwnerofStudent, IsProfesorOfSubjectOrReadOnly, IsProfesorOrReadOnly
 from accounts.serializers import ClassInstancePutSerializer, ClassInstanceSerializer, StudentSerializer
 
 from .models import Attendance, Discipline, StudentClassRequest, StudentGroup, Student,Subject,ClassInstance, Teacher, CustomUser
@@ -202,7 +202,7 @@ class ClassExitTeacher(ModelViewSet):
         
 #APODERADOS
 #Views Apoderados
-@permission_classes([IsOwnerofStudentPost])
+@permission_classes([IsOwnerofStudent])
 class ClassStudentAuto(ModelViewSet):
     def get_student(self,request):        
         try:
