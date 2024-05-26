@@ -51,10 +51,7 @@ class IsOwnerofStudent(BasePermission):
     def has_permission(self, request, view):
         request_user = CustomUser.objects.get(email=request.user)
         student_id = request.query_params.get('student_id')
-        student_user = Student.objects.get(id=student_id).user
-        print(request_user,'request_user')
-        print(student_id,"student_id")
-        print(student_user,"student_user")
+        student_user = Student.objects.get(id=student_id).user        
          
         if request_user == student_user:
             return True            
