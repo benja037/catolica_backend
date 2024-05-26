@@ -56,8 +56,8 @@ class IsOwnerofStudent(BasePermission):
         print(student_id,"student_id")
         print(student_user,"student_user")
          
-        if request_user != student_user:
-            return False            
+        if request_user == student_user:
+            return True            
 
         if request.user.is_superuser or request.user.is_staff:
             return True
