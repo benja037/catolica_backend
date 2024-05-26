@@ -104,11 +104,11 @@ class Students_check_rutView(ModelViewSet):
 
         if students.exists():
             student = students.first()
-            if student.user:
-                student.user = user
-                student.save()
+            if student.user:                
                 return Response({'message': 'El estudiante ya está creado y tiene un usuario asociado.'}, status=status.HTTP_200_OK)
             else:
+                student.user = user
+                student.save()
                 return Response({'message': 'El estudiante ya está creado pero no tiene un usuario asociado.'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'El estudiante no está creado.'}, status=status.HTTP_200_OK)
