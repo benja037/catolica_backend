@@ -238,8 +238,6 @@ class Apoderados_Subject_Post_add(ModelViewSet):
 
 @permission_classes([IsOwnerofStudent])
 class Apoderados_Subject_delete(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsOwnerofStudent]
-
     def get_student(self, student_id):
         try:
             student = Student.objects.get(id=student_id)
