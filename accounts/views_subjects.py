@@ -217,18 +217,21 @@ class Apoderados_Subject_Post_add(ModelViewSet):
             print("student_id",student_id)        
             student = self.get_student(student_id)              
             subject = Subject.objects.get(id=subject_pk)
-            if subject.mode == 'privado':
-                return Response({"message": "No puedes agregar estudiantes a un subject privado"}, status=status.HTTP_403_FORBIDDEN)
-            if subject.mode == 'moderado':
-                requests_earrings = StudentSubjectRequest.objects.filter(student=student, subject=subject,state='pendiente')
-                if requests_earrings :
-                    return Response({"message": "ya enviaste la solicitud"}, status=status.HTTP_403_FORBIDDEN)
-                else:
-                    StudentSubjectRequest.objects.create(student=student, subject=subject,state='pendiente')
-                    return Response({"message": "Solicitud enviada correctamente"}, status=status.HTTP_201_CREATED)
-                #return Response({"message": "No puedes agregar estudiantes a un subject moderado"}, status=status.HTTP_403_FORBIDDEN)            
-            subject.students.add(student)
-            return Response({"message": "Estudiante agregado correctamente"}, status=status.HTTP_201_CREATED)
+            if subject.num_max_students <= len(subject.students.all()):
+                if subject.mode == 'privado':
+                    return Response({"message": "No puedes agregar estudiantes a un subject privado"}, status=status.HTTP_403_FORBIDDEN)
+                if subject.mode == 'moderado':
+                    requests_earrings = StudentSubjectRequest.objects.filter(student=student, subject=subject,state='pendiente')
+                    if requests_earrings :
+                        return Response({"message": "ya enviaste la solicitud"}, status=status.HTTP_403_FORBIDDEN)
+                    else:
+                        StudentSubjectRequest.objects.create(student=student, subject=subject,state='pendiente')
+                        return Response({"message": "Solicitud enviada correctamente"}, status=status.HTTP_201_CREATED)
+                    #return Response({"message": "No puedes agregar estudiantes a un subject moderado"}, status=status.HTTP_403_FORBIDDEN)            
+                subject.students.add(student)            
+                return Response({"message": "Estudiante agregado correctamente"}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"message": "El subject esta lleno"}, status=status.HTTP_400_BAD_REQUEST)
         except Student.DoesNotExist:
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         except Subject.DoesNotExist:
