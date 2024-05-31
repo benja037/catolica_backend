@@ -324,11 +324,13 @@ class SignUpSerializer(serializers.ModelSerializer):
     lastname=serializers.CharField(max_length=45)
     date_of_birth = serializers.DateField()
     user_type=serializers.CharField(max_length=10)
-    gender=serializers.CharField(max_length=20)
+    gender=serializers.CharField(max_length=20)    
+    document_type = serializers.CharField(max_length=50)  
+    document_number = serializers.CharField(max_length=50) 
  
     class Meta:
         model=CustomUser
-        fields= ['email','password','firstname','lastname','date_of_birth','user_type','gender']
+        fields= ['email','password','firstname','lastname','date_of_birth','user_type','gender','document_type','document_number']
 
     def validate(self,attrs):
         email_exists=CustomUser.objects.filter(email=attrs['email']).exists()
