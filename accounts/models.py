@@ -57,7 +57,13 @@ class CustomUser(AbstractUser):
     date_of_birth=models.DateField(null=True)
     firstname = models.CharField(max_length=45,null=True)
     lastname = models.CharField(max_length=45,null=True)
-    phone_number = models.CharField(max_length=45,null=True)        
+    phone_number = models.CharField(max_length=45,null=True)      
+    DOCUMENT_CHOICES = [
+        ('rut', 'rut'),
+        ('pasaporte', 'pasaporte'),
+    ]
+    document_type = models.CharField(choices=DOCUMENT_CHOICES,max_length=50, null=True)  
+    document_number = models.CharField(max_length=50,unique=True)    
     user_type=models.CharField(choices=TIPO_USUARIO_CHOICES,max_length=10)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
@@ -83,6 +89,12 @@ class Teacher(models.Model):
     firstname = models.CharField(max_length=45)
     lastname = models.CharField(max_length=45)
     verified = models.BooleanField(default=False)
+    DOCUMENT_CHOICES = [
+        ('rut', 'rut'),
+        ('pasaporte', 'pasaporte'),
+    ]
+    document_type = models.CharField(choices=DOCUMENT_CHOICES,max_length=50, null=True)  
+    document_number = models.CharField(max_length=50,unique=True)  
     def __str__(self):
         return self.firstname + self.lastname
     
