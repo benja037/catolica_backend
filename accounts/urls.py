@@ -63,7 +63,9 @@ urlpatterns = [
     path('subjects/<int:subject_pk>/class/<int:class_pk>/teacher-go-off/', views_class.ClassExitTeacher.as_view({'delete': 'exit_teacher_auto'}), name='teacher-go-off-auto'),
     #Class Apoderados
     path('apoderados/subjects/<int:subject_pk>/class/<int:class_pk>/students-auto/', views_class.ClassStudentAuto.as_view({'post': 'post_student_auto', 'delete': 'delete_student_auto'}), name='subject-add-alumno-auto'),
-
+    path('apoderados/subjects/<int:subject_pk>/class/', views_class.Apoderados_Subject_Class_Get.as_view({'get': 'list_class'}), name='apoderados-subject-class'),
+    path('apoderados/subjects/<int:subject_pk>/class/<int:class_pk>/', views_class.Apoderados_Subjects_Class_Retrieve.as_view({'get': 'retrieve_class'}), name='apoderados-class-detail'),
+   
     #Use Subject for validate teacher is staff of the subject
     path('subjects/<int:subject_pk>/class/<int:class_pk>/', views_class.ClassInstance_allView.as_view({'get': 'retrieve_class', 'patch': 'patch_class', 'delete': 'delete_class'}), name='clase-detail'),
     path('subjects/<int:subject_pk>/class/<int:class_pk>/students/', views_class.ClassStudents.as_view({'get': 'get_students', 'post': 'post_student'}), name='class-add-alumno'),

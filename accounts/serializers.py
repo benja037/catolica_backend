@@ -232,6 +232,48 @@ class ClassInstancePutSerializer(serializers.ModelSerializer):
         model = ClassInstance
         fields=['id','subject','date','time_start','time_end','state','num_max_students','mode','label']
 
+class ClassRetrieveApoderadoSerializer(serializers.ModelSerializer):  
+    teachers = TeacherSerializer(many=True, read_only=True)
+    students = SimpleStudentSerializer(many=True, read_only=True)  
+    class Meta:
+        model = ClassInstance
+        fields=['id','subject','date','time_start','time_end','state','num_max_students','teachers','students','mode']      
+   
+    def get_student_by_id(self, student_id):        
+        try:
+            student = Student.objects.get(id=student_id)            
+            return student
+        except Student.DoesNotExist:
+            raise serializers.ValidationError("Student does not exist")     
+        
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+        student_id = request.query_params.get('student_id')  # Retrieve the student_id from the URL query parameters
+
+        if student_id:
+            try:
+                student = self.get_student_by_id(student_id)
+                id_of_students = [student_data['id'] for student_data in representation['students']]
+                representation['rolled'] = student.id in id_of_students
+
+                pending_request_exists = StudentClassRequest.objects.filter(
+                    student=student,
+                    class_instance=instance,
+                    state='pendiente'
+                ).exists()
+
+                representation['request'] = pending_request_exists
+            except serializers.ValidationError:
+                representation['rolled'] = False  # If the student doesn't exist, consider them not enrolled
+                representation['request'] = False
+        else:
+            representation['rolled'] = False  # If no student_id is provided, consider them not enrolled
+            representation['request'] = False
+
+        return representation
+    
+
 class StudentGroupSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True, read_only=True)
     class Meta:

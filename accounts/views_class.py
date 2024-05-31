@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import  IsOwnerofStudent, IsProfesorOfSubjectOrReadOnly, IsProfesorOrReadOnly
-from accounts.serializers import ClassInstancePutSerializer, ClassInstanceSerializer, StudentSerializer
+from accounts.serializers import ClassInstancePutSerializer, ClassInstanceSerializer, ClassRetrieveApoderadoSerializer, StudentSerializer
 
 from .models import Attendance, Discipline, StudentClassRequest, StudentGroup, Student,Subject,ClassInstance, Teacher, CustomUser
 from rest_framework.permissions import IsAuthenticated
@@ -243,3 +243,38 @@ class ClassStudentAuto(ModelViewSet):
             return Response({"message": "Student no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         except ClassInstance.DoesNotExist:
             return Response({"message": "Subject no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+@permission_classes([IsOwnerofStudent])
+class Apoderados_Subject_Class_Get(ModelViewSet):    
+    serializer_class = ClassRetrieveApoderadoSerializer       
+    queryset = ClassInstance.objects.all()    
+    
+    @action(detail=True, methods=['get']) 
+    def list_class(self,request,subject_pk=None):
+        try:
+            class_of_subject = ClassInstance.objects.get(id=subject_pk)
+            serializer = ClassRetrieveApoderadoSerializer(class_of_subject, many=True,context={'request':request})
+            return Response(serializer.data)
+        except ClassInstance.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)        
+        
+@permission_classes([IsOwnerofStudent])
+class Apoderados_Subjects_Class_Retrieve(ModelViewSet):    
+    serializer_class = ClassRetrieveApoderadoSerializer       
+    queryset = ClassInstance.objects.all()
+
+    def get_class(self, class_id):
+        try:
+            return ClassInstance.objects.get(id=class_id)
+        except ClassInstance.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND    
+   
+    
+    @action(detail=True, methods=['get'])    
+    def retrieve_class(self, request, subject_pk=None,class_pk=None):
+        try:
+            class_instance = self.get_class(class_id=class_pk)
+            serializer = ClassRetrieveApoderadoSerializer(class_instance,context={'request':request})
+            return Response(serializer.data)
+        except ClassInstance.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
