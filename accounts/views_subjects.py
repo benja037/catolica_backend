@@ -154,7 +154,7 @@ class SubjectsStudents(ModelViewSet):
             subject.students.remove(student)
             groups = StudentGroup.objects.filter(subject=subject)
             for group in groups:
-                if (student in groups.students.all()):
+                if (student in group.students.all()):
                     group.students.remove(student)
                 group.students.remove(student)
             classInstances = ClassInstance.objects.filter(subject=subject, state="proximamente")
