@@ -15,7 +15,7 @@ class CustomUser_allView(ModelViewSet):
         try:
             customuser = CustomUser.objects.get(id=request.user.id)
             
-            serializer = UserSerializer(customuser, many=True)
+            serializer = UserSerializer(customuser)
             return Response(serializer.data)
         except CustomUser.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
