@@ -62,6 +62,7 @@ urlpatterns = [
     path('subjects/<int:subject_pk>/class/', views_class.ClassInstance_allView.as_view({'get': 'list_class', 'post': 'create_class'}), name='clase-list'),
     path('subjects/<int:subject_pk>/class/<int:class_pk>/teacher-go-off/', views_class.ClassExitTeacher.as_view({'delete': 'exit_teacher_auto'}), name='teacher-go-off-auto'),
     #Class Apoderados
+    path('apoderados/subjects/<int:subject_pk>/class-date/<str:date>/', views_class.Subjects_Apoderados_Class_allView.as_view({'get': 'list'}), name='subject-apoderados-allClass-of-day'),
     path('apoderados/subjects/<int:subject_pk>/class/<int:class_pk>/students-auto/', views_class.ClassStudentAuto.as_view({'post': 'post_student_auto', 'delete': 'delete_student_auto'}), name='subject-add-alumno-auto'),
     path('apoderados/subjects/<int:subject_pk>/class/', views_class.Apoderados_Subject_Class_Get.as_view({'get': 'list_class'}), name='apoderados-subject-class'),
     path('apoderados/subjects/<int:subject_pk>/class/<int:class_pk>/', views_class.Apoderados_Subjects_Class_Retrieve.as_view({'get': 'retrieve_class'}), name='apoderados-class-detail'),
