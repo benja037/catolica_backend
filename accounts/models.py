@@ -8,6 +8,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from django.contrib.admin.models import LogEntry as BaseLogEntry
+from django.contrib.auth import get_user_model
 # Create your models here.
 
 class CustomUserManager(BaseUserManager):
@@ -190,6 +191,12 @@ class Attendance(models.Model):
     user_previous_state=models.CharField(choices = PREVIOUS_STATE_CHOICES,max_length=40,default='no-responde')
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+
+class AttendanceHistory(models.Model):
+    attendance = models.ForeignKey(Attendance, on_delete=models.CASCADE, related_name='history')
+    user_previous_state = models.CharField(max_length=40)
+    changed_at = models.DateTimeField(auto_now_add=True)
+    changed_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
    
 
 class TeacherSubjectRequest(models.Model):
