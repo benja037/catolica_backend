@@ -237,7 +237,7 @@ class ClassRetrieveApoderadoSerializer(serializers.ModelSerializer):
     students = SimpleStudentSerializer(many=True, read_only=True)  
     class Meta:
         model = ClassInstance
-        fields=['id','subject','date','time_start','time_end','state','num_max_students','teachers','students','mode']      
+        fields=['id','subject','date','time_start','time_end','state','num_max_students','teachers','students','mode','label']      
    
     def get_student_by_id(self, student_id):        
         try:
