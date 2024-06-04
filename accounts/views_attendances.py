@@ -4,9 +4,9 @@ from rest_framework import status
 from rest_framework.decorators import action,permission_classes
 
 from accounts.permissions import IsProfesorOrReadOnly,IsProfesorOfSubjectOrReadOnly
-from accounts.serializers import AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyStateChange
+from accounts.serializers import AttendanceHistorySerializer, AttendanceSerializer, AttendanceSerializerNameLastname, AttendanceSerializerOnlyStateChange
 
-from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, CustomUser
+from .models import Attendance, ClassInstance, StudentGroup, Student,Subject,Discipline, Teacher, CustomUser,AttendanceHistory
 from rest_framework.permissions import IsAuthenticated
 
 #List [ID,subject_name,staff_id] /subjectss/
@@ -80,20 +80,41 @@ class Attendances_allView(ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Attendance.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-""" @permission_classes([IsProfesorOfSubjectOrReadOnly])
-class AttendanceOfClass(ModelViewSet):        
-
-    def create_default(self, request, class_pk=None,):
-        try:
-            class_instance = ClassInstance.objects.get(id=class_pk)              
-            students = class_instance.alumnos
-            for student in students:
-                student_id = student.get('id')
-                Attendance.objects.create(class_instance=class_instance,student = Student.objects.get(id=student_id),state=False,user_previous_state="no-responde")
-            return Response({"message": "Alumno agregado correctamente"}, status=status.HTTP_201_CREATED)
-        except ClassInstance.DoesNotExist:
-            return Response({"message": "Clase no encontrada"}, status=status.HTTP_404_NOT_FOUND) """
         
+@permission_classes([IsAuthenticated])
+class AttendanceViewSet(ModelViewSet):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.user_type=='profesor':
+            return Attendance.objects.filter(class_instance__professor=user)
+        else:
+            return Attendance.objects.filter(student=user.id)
     
+    @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
+    def student_update_attendance(self, request, attendance_pk=None):
+        try:
+            user = CustomUser.objects.get(id=request.user.id)
+            print(request.user.id)
+            print(attendance_pk)
+            print(request.user.id)
+            instance = Attendance.objects.get(id=attendance_pk)
+        except Attendance.DoesNotExist:
+            return Response({'detail': 'Not found or not permitted.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if user.user_type=='profesor':
+            return Response({'detail': 'Professors cannot update this field.'}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        if 'user_previous_state' in serializer.validated_data:
+            AttendanceHistory.objects.create(
+                attendance=instance,
+                user_previous_state=serializer.validated_data['user_previous_state'],
+                changed_by=request.user
+            )
+        self.perform_update(serializer)
+        return Response(serializer.data)

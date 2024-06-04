@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ClassInstance, StudentGroup, CustomUser,Student, StudentSubjectRequest,Teacher,Discipline,Subject,Attendance
+from .models import AttendanceHistory, ClassInstance, StudentGroup, CustomUser,Student, StudentSubjectRequest,Teacher,Discipline,Subject,Attendance
 
 from django.contrib import admin
 
@@ -21,6 +21,9 @@ admin.site.register(Subject,SubjectDisplay)
 class AttendanceDisplay(admin.ModelAdmin):
     list_display = ('id','student','class_instance','updated_at') 
 admin.site.register(Attendance,AttendanceDisplay)
+class HistoryAttendanceDisplay(admin.ModelAdmin):
+    list_display = ('id','attendance', 'user_previous_state', 'changed_at', 'changed_by') 
+admin.site.register(AttendanceHistory,HistoryAttendanceDisplay)
 class StudentGroupDisplay(admin.ModelAdmin):
     list_display = ('id','name')
 admin.site.register(StudentGroup,StudentGroupDisplay)

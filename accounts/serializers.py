@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ClassInstance, Discipline, StudentClassRequest, StudentGroup, StudentSubjectRequest, Teacher, CustomUser,Student,Subject,Attendance
+from .models import ClassInstance, Discipline, StudentClassRequest, StudentGroup, StudentSubjectRequest, Teacher, CustomUser,Student,Subject,Attendance,AttendanceHistory
 from rest_framework.validators import ValidationError
 from rest_framework import status
 
@@ -302,6 +302,36 @@ class AttendanceSerializerOnlyStateChange(serializers.ModelSerializer):
     class Meta:
         model = Attendance
         fields=['id','student','class_instance','state','user_previous_state']
+
+class AttendanceSerializerStudent(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = ['id', 'student', 'class_instance', 'state', 'user_previous_state', 'created_at', 'updated_at']
+
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        user = CustomUser.objects.get(id=request.user.id)
+        print(user.user_type)
+        
+        if user.user_type=='profesor':
+            raise serializers.ValidationError("Professors cannot update the 'user_previous_state' field.")
+        
+        if user.user_type=='apoderado':
+            if 'state' in validated_data:
+                raise serializers.ValidationError("Students cannot update the 'state' field.")
+            if 'user_previous_state' in validated_data:
+                AttendanceHistory.objects.create(
+                    attendance=instance,
+                    user_previous_state=validated_data['user_previous_state'],
+                    changed_by=user
+                )
+        
+        return super().update(instance, validated_data)
+
+class AttendanceHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttendanceHistory
+        fields = ['attendance', 'user_previous_state', 'changed_at', 'changed_by']
 
 class StudentSubjectRequestSerializer(serializers.ModelSerializer): 
     student = SimpleStudentSerializer(read_only=True)    
