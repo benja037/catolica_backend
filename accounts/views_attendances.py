@@ -93,15 +93,20 @@ class AttendanceViewSet(ModelViewSet):
             return Attendance.objects.filter(class_instance__professor=user)
         else:
             return Attendance.objects.filter(student=user.id)
+    def get_student(self, student_id):
+        try:
+            student = Student.objects.get(id=student_id)
+            return student
+        except Student.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
     
     @action(detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
-    def student_update_attendance(self, request, attendance_pk=None):
+    def student_update_attendance(self, request, class_pk=None):
         try:
             user = CustomUser.objects.get(id=request.user.id)
-            print(request.user.id)
-            print(attendance_pk)
-            print(request.user.id)
-            instance = Attendance.objects.get(id=attendance_pk)
+            student_id = request.query_params.get('student_id')
+            student = self.get_student(student_id)
+            instance = Attendance.objects.get(class_instance=class_pk,student=student)
         except Attendance.DoesNotExist:
             return Response({'detail': 'Not found or not permitted.'}, status=status.HTTP_404_NOT_FOUND)
 

@@ -76,7 +76,7 @@ urlpatterns = [
     path('subjects/<int:subject_pk>/class/<int:class_pk>/attendances/', views_attendances.Attendances_allView.as_view({'get': 'list_attendances', 'post': 'create_attendance'}), name='asistencia-list'),
     path('subjects/<int:subject_pk>/attendances/<int:attendance_pk>/', views_attendances.Attendances_allView.as_view({'get': 'retrieve_attendance', 'put': 'update_attendance', 'delete': 'delete_attendance'}), name='asistencia-detail'),
     #Attendance Apoderados
-    path('apoderados/attendances/<int:attendance_pk>/',views_attendances.AttendanceViewSet.as_view({'patch':'student_update_attendance'}),name='student-change-previous-state'),
+    path('apoderados/class/<int:class_pk>/change-previous-state/',views_attendances.AttendanceViewSet.as_view({'patch':'student_update_attendance'}),name='student-change-previous-state'),
    
     #Requests Subjects
     path('subjects/<int:subject_pk>/requests/', views_requests.Requests_GetPatch.as_view({'get': 'list_requests'}), name='list-requests'),
