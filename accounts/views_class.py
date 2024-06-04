@@ -99,6 +99,9 @@ class Subjects_Class_allView(ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
 
+
+        
+
 @permission_classes([IsProfesorOfSubjectOrReadOnly])
 class ClassStudents(ModelViewSet):
     def get_students(self, request, class_pk=None,subject_pk=None):
@@ -202,6 +205,20 @@ class ClassExitTeacher(ModelViewSet):
         
 #APODERADOS
 #Views Apoderados
+#Show class from a specific day        
+@permission_classes([IsOwnerofStudent])
+class Subjects_Apoderados_Class_allView(ModelViewSet):
+    serializer_class = ClassRetrieveApoderadoSerializer
+    queryset = ClassInstance.objects.all()
+    
+    def list(self,request,subject_pk=None,date=None):
+        try:       
+            classInstances = ClassInstance.objects.filter(subject=subject_pk, date=date).order_by('time_start')            
+            class_data = ClassRetrieveApoderadoSerializer(classInstances,context={'request':request}, many=True).data                
+            return Response(class_data)
+        except ClassInstance.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
 @permission_classes([IsOwnerofStudent])
 class ClassStudentAuto(ModelViewSet):
     def get_student(self,request):        
