@@ -48,8 +48,7 @@ class Subjects_Get_Post(ModelViewSet):
             teacher = self.get_teacher(request)
             discipline = Discipline.objects.get(id=discipline_pk)  
            
-            subject = serializer.save(discipline=discipline)
-            
+            subject = serializer.save(discipline=discipline)  
            
             subject.teachers.add(teacher)
             
