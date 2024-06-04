@@ -6,6 +6,7 @@ from . import views_class
 from . import views_attendances
 from . import views_students
 from . import views_requests
+from . import views_customuser
 
 from django.urls import path
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView,  TokenVerifyView)
@@ -21,6 +22,8 @@ router.register(r'horario',views_simple.HorarioView, 'horario') """
 
 
 urlpatterns = [ 
+    #Users
+    path('profile/',views_customuser.CustomUser_allView.as_view({'get': 'retrieve_customuser'}), name='retrieve-customuser'),
     #Students
     path('students/', views_students.Students_allView.as_view({'get': 'list_students', 'post': 'create_student'}), name='students-list'),
     path('students/<int:student_pk>/', views_students.Students_allView.as_view({'get': 'retrieve_student', 'put': 'update_student'}), name='student-detail'),
