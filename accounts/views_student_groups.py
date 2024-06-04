@@ -116,10 +116,9 @@ class ManageStudentOfGroup(ModelViewSet):
         except StudentGroup.DoesNotExist:
             return Response({"message": "Grupo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-    def delete_student_of_group(self,request, group_pk=None,subject_pk=None):
+    def delete_student_of_group(self,request, group_pk=None,subject_pk=None,student_pk=None):
         try:
-            student_id = request.data.get('student_pk')            
-            student = Student.objects.get(id=student_id)
+            student = Student.objects.get(id=student_pk)
             group = StudentGroup.objects.get(id=group_pk)
             group.students.remove(student)
             return Response({"message": "Alumno eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
