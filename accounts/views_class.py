@@ -57,7 +57,9 @@ class ClassInstance_allView(ModelViewSet):
         group_id = request.data.get('group_id', None)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            teacher = self.get_teacher(request)
             class_instance =serializer.save(subject=Subject.objects.get(id=subject_pk))
+            class_instance.teachers.add(teacher)
             if group_id != None and group_id != "":
                 class_instance.add_students_group(group_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
