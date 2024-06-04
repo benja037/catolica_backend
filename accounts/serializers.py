@@ -255,7 +255,7 @@ class ClassRetrieveApoderadoSerializer(serializers.ModelSerializer):
             try:
                 student = self.get_student_by_id(student_id)
                 id_of_students = [student_data['id'] for student_data in representation['students']]
-                representation['rolled'] = student.id in id_of_students
+                representation['rolled'] = student.id in id_of_students               
 
                 pending_request_exists = StudentClassRequest.objects.filter(
                     student=student,
