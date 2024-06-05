@@ -234,7 +234,7 @@ class TempFile(models.Model):
 def create_user_profile(sender,instance,created,**kwargs):
     if created:        
         if instance.user_type=="profesor":
-            Teacher.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,phone_number=instance.phone_number)
+            Teacher.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,phone_number=instance.phone_number,document_type=instance.document_type,document_number=instance.document_number)
         if instance.user_type=="alumno":
             Student.objects.create(user=instance,date_of_birth=instance.date_of_birth,firstname=instance.firstname,lastname=instance.lastname,gender=instance.gender,phone_number=instance.phone_number)
         if instance.user_type=="apoderado":
